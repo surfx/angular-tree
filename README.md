@@ -2,7 +2,11 @@
 
 Árvore simples em angular, html e css
 
+![Árvore simples](https://github.com/surfx/angular-tree/blob/main/arvore.png)
+
 ## Angular
+
+Executar: `ng serve`, acessar [localhost:4200](http://localhost:4200/#)
 
 ```
 $ ng v
@@ -40,3 +44,4 @@ typescript                      4.7.4
 # Referências
 
 - [Iconscout](https://iconscout.com/icons/arrow)
+- [Projeto Git](https://github.com/surfx/angular-tree)
