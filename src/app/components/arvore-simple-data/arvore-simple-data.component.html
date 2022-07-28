@@ -1,0 +1,15 @@
+<ng-template [ngIf]="hasData()">
+    <ul *ngFor="let item of Dados" class="tree_two_little">
+        <li>
+            <img [src]="getImg(item)" (click)="clickImg(item)" [class]="getImgClass(item)">
+            <label (click)="clickLabel(item)">
+                <input type="checkbox" [checked]="item.selecionado" (change)="checkValue(item)" *ngIf="ExibirCheckBox">
+                {{item.texto}}
+            </label>
+            <img src="../../../assets/imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
+        </li>
+        <ng-template [ngIf]="item.temFilhos() && item.aberto">
+            <app-arvore-simple-data [Dados]="item.filhos" [ExibirCheckBox]="ExibirCheckBox"></app-arvore-simple-data>
+        </ng-template>
+    </ul>
+</ng-template>
