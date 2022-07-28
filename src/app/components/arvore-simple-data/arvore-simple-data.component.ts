@@ -11,13 +11,8 @@ import { DadosArvoreServiceService } from 'src/app/servicos/dados-arvore-service
 })
 export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
-  // Criar variável para permitir este tipo de comportamento
-  // um item só deve estar marcado se TODOS os filhos também estiverem ??
-  // criar método que retorna os ids apenas dos itens selecionados - no caso os pais
-  // ex: se um pai foi selecionado, não precisa retornar quais filhos estão selecionados
-  // já que um item só estará selecionado se TODOS os filhos também estiverem
-
   // verificar o filtro e subloads
+  // verificar items já marcados, antes e depois dos filtros / subloads
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
 
@@ -45,14 +40,22 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     if (this._subscriptions !== undefined && this._subscriptions.length > 0) {
       this._subscriptions.forEach(s => { if (s !== undefined) { s.unsubscribe(); } });
     }
+    this._idsSelecionados = undefined;
   }
 
   public hasData(): boolean {
     return this.Dados !== null && this.Dados !== undefined && this.Dados.length > 0;
   }
 
-  public setData(data: DataTree[] | undefined): void {
+  public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
+    this._idsSelecionados = this.getIdSelecionados();
     this.Dados = data;
+    if (ajustarLoading && this.Dados !== undefined) {
+      this.ajustarLoadingJaClicado(this.Dados);
+    }
+    if (this._idsSelecionados !== undefined) {
+      this.selecionarIds(this._idsSelecionados);
+    }
   }
 
   public getImg(item: DataTree): string {
@@ -192,6 +195,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public limparSelecao(): void {
     this.selecionarDados(this.Dados, false);
+    this._idsSelecionados = undefined;
   }
 
   public selecionarTodos(): void {
@@ -231,10 +235,14 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public limparData(): void {
     this.Dados = undefined;
+    this._idsSelecionados = undefined;
   }
 
   public loadAll(): void {
     this.Dados?.forEach(f => this.loadAllAux(f));
+    if (this._idsSelecionados !== undefined) {
+      this.selecionarIds(this._idsSelecionados);
+    }
   }
 
   private loadAllAux(data: DataTree | undefined): void {
@@ -251,6 +259,31 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
       });
     this._subscriptions.push(subs);
   }
+
+  //#region ajustes Ja Clicado
+  private ajustarLoadingJaClicado(data: DataTree[] | undefined): void {
+    if (data === null || data === undefined || data.length <= 0) { return; }
+    data.forEach(d => {
+      d.jaClicado = d.temFilhos();
+      if (d.temFilhos()) {
+        this.ajustarLoadingJaClicado(d.filhos);
+      }
+    });
+  }
+
+  public setAllJaClicado(jaClicado: boolean = true): void {
+    this.setAllJaClicadoAux(this._dados, jaClicado);
+  }
+  private setAllJaClicadoAux(data: DataTree[] | undefined, jaClicado: boolean): void {
+    if (data === null || data === undefined || data.length <= 0) { return; }
+    data.forEach(d => {
+      d.jaClicado = jaClicado;
+      if (d.temFilhos() && this.ok(d.filhos)) {
+        this.ajustarLoadingJaClicado(d.filhos);
+      }
+    });
+  }
+  //#endregion
 
   private ok = (el: any): boolean => el !== undefined && el !== null && el;
 

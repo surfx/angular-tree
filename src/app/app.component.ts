@@ -70,24 +70,13 @@ export class AppComponent {
       this.alldata = this.service.getData();
     }
     this.dados = this.alldata;
-    this.treeSimple?.setData(this.dados);
-    this.setarJaClicado(this.dados);
+    this.treeSimple?.setData(this.alldata, true);
   }
 
   public loadInitialData(): void {
     this.dados = this.service.getInitialData();
+    this.treeSimple?.setData(this.dados, true);
   }
-
-  private setarJaClicado(data: DataTree[] | undefined): void {
-    if (data === null || data === undefined || data.length <= 0) { return; }
-    data.forEach(d => {
-      d.jaClicado = d.temFilhos();
-      if (d.temFilhos()) {
-        this.setarJaClicado(d.filhos);
-      }
-    });
-  }
-
 
   public pesquisarArvore(event: any): void {
     let valor = event.target.value;
@@ -99,7 +88,7 @@ export class AppComponent {
     console.log(temp);
     if (temp === undefined) { return; }
     this.dados = temp;
-    this.treeSimple?.setData(temp);
+    this.treeSimple?.setData(this.dados, true);
   }
 
   public loadAllTree(): void {
