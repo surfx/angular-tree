@@ -17,6 +17,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   // ex: se um pai foi selecionado, não precisa retornar quais filhos estão selecionados
   // já que um item só estará selecionado se TODOS os filhos também estiverem
 
+  // verificar o filtro e subloads
+
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
 
   private _idsSelecionados: string[] | undefined;
@@ -90,6 +92,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
     if (!item.jaClicado) { // evitar load excessivo
       item.isLoading = true;
+
+      item.filhos = []; // evitar que filhos sejam re-adds
+
+      // TODO: verificar filtros
 
       // apenas para simular o loading
       this.delay(300).then(any => {
@@ -244,7 +250,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
         this.loadAllAux(fadd);
       });
     this._subscriptions.push(subs);
-
   }
 
   private ok = (el: any): boolean => el !== undefined && el !== null && el;

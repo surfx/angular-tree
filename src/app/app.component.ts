@@ -99,6 +99,7 @@ export class AppComponent {
     console.log(temp);
     if (temp === undefined) { return; }
     this.dados = temp;
+    this.treeSimple?.setData(temp);
   }
 
   public loadAllTree(): void {
