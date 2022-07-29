@@ -12,15 +12,15 @@ export class AppComponent {
 
   @ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
 
-  dados: DataTree[] | undefined;
+  data: DataTree[] | undefined;
   alldata: DataTree[] | undefined;
 
   constructor(private service: DadosArvoreServiceService) {
-    this.dados = this.service.getInitialData();
+    this.data = this.service.getInitialData();
     this.alldata = this.service.getData();
   }
 
-  public getSel() {
+  public getMapSelecionados() {
     if (!this.treeSimple) { return; }
     let sel = this.treeSimple.getMapSelecionados();
     console.log('-----------------------');
@@ -58,24 +58,15 @@ export class AppComponent {
     this.treeSimple?.limparData();
   }
 
-  public testeIds(): void {
-    let ids: string[] = ['1', '2', '3', '4'];
-    let id = '5';
-
-    console.log(ids.indexOf(id));
-  }
-
   public loadAll(): void {
     if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
       this.alldata = this.service.getData();
     }
-    this.dados = this.alldata;
     this.treeSimple?.setData(this.alldata, true);
   }
 
   public loadInitialData(): void {
-    this.dados = this.service.getInitialData();
-    this.treeSimple?.setData(this.dados, true);
+    this.treeSimple?.setData(this.service.getInitialData(), true);
   }
 
   public pesquisarArvore(event: any): void {
@@ -87,8 +78,7 @@ export class AppComponent {
     let temp: DataTree[] | undefined = this.service.filtrarData(valor);
     console.log(temp);
     if (temp === undefined) { return; }
-    this.dados = temp;
-    this.treeSimple?.setData(this.dados, true);
+    this.treeSimple?.setData(temp, true);
   }
 
   public loadAllTree(): void {

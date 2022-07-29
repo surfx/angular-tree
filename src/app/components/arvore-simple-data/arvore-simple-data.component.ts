@@ -13,48 +13,43 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   // verificar o filtro e subloads
   // verificar items já marcados, antes e depois dos filtros / subloads
+  // o controle de itens selecionados tem que ser feito dentro deste componente
+  // o controle deve ser fino, ou seja, ao clicar e selecionar um item, o mesmo deve ir para 
+  // um set de ids de itens selecionados, e ao ser deselecionado, removido do set
+  // itens podem vir pré-selecionados através da propriedade 'dados' e da função 'setData'
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
 
-  private _idsSelecionados: string[] | undefined;
-
+  //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
-  @Input('Dados')
-  set Dados(dadosIn: DataTree[] | undefined) {
-    this._idsSelecionados = this.getIdSelecionados();
-    this._dados = dadosIn;
-    if (this._idsSelecionados !== undefined) {
-      this.selecionarIds(this._idsSelecionados);
-    }
+  @Input('dados')
+  set dados(data: DataTree[] | undefined) {
+    this._dados = Object.assign([], data);
   }
-  get Dados(): DataTree[] | undefined { return this._dados; }
+  get dados(): DataTree[] | undefined { return this._dados; }
 
   private _subscriptions: Subscription[] = [];
 
   constructor(private service: DadosArvoreServiceService) { }
 
   ngOnInit(): void {
+
   }
 
   ngOnDestroy(): void {
     if (this._subscriptions !== undefined && this._subscriptions.length > 0) {
       this._subscriptions.forEach(s => { if (s !== undefined) { s.unsubscribe(); } });
     }
-    this._idsSelecionados = undefined;
   }
 
   public hasData(): boolean {
-    return this.Dados !== null && this.Dados !== undefined && this.Dados.length > 0;
+    return this.dados !== null && this.dados !== undefined && this.dados.length > 0;
   }
 
   public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
-    this._idsSelecionados = this.getIdSelecionados();
-    this.Dados = data;
-    if (ajustarLoading && this.Dados !== undefined) {
-      this.ajustarLoadingJaClicado(this.Dados);
-    }
-    if (this._idsSelecionados !== undefined) {
-      this.selecionarIds(this._idsSelecionados);
+    this.dados = Object.assign([], data);
+    if (ajustarLoading && this.dados !== undefined) {
+      this.ajustarLoadingJaClicado(this.dados);
     }
   }
 
@@ -127,12 +122,15 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     //item.aberto = !item.aberto;
 
     //item.selecionarFilhos();
-
   }
 
-  checkValue(item: DataTree) {
+  public checkValue(item: DataTree) {
     item.selecionado = !item.selecionado;
     item.selecionarFilhos();
+
+    // não funciona (!) porque existem uma recursão de componentes aqui (!)
+    console.log(this.dados);
+    console.log('---------------------');
   }
 
   private loadData(id: string): DataTree[] | undefined {
@@ -145,8 +143,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public getMapSelecionados(): Map<string, DataTree> | undefined {
-    if (this.Dados === undefined) { return undefined; }
-    return this.getMapSelecionadosAux(this.Dados);
+    if (this.dados === undefined) { return undefined; }
+    return this.getMapSelecionadosAux(this.dados);
   }
 
   private getMapSelecionadosAux(data: DataTree[]): Map<string, DataTree> | undefined {
@@ -171,8 +169,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public getIdSelecionados(): string[] | undefined {
-    if (this.Dados === undefined) { return undefined; }
-    return this.getIdSelecionadosAux(this.Dados);
+    if (this.dados === undefined) { return undefined; }
+    return this.getIdSelecionadosAux(this.dados);
   }
 
   private getIdSelecionadosAux(data: DataTree[]): string[] | undefined {
@@ -194,12 +192,11 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public limparSelecao(): void {
-    this.selecionarDados(this.Dados, false);
-    this._idsSelecionados = undefined;
+    this.selecionarDados(this.dados, false);
   }
 
   public selecionarTodos(): void {
-    this.selecionarDados(this.Dados, true);
+    this.selecionarDados(this.dados, true);
   }
 
   private selecionarDados(data: DataTree[] | undefined, selecionar: boolean): void {
@@ -212,10 +209,11 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  public selecionarIds(ids: string[], desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
+  public selecionarIds(ids: string[] | undefined, desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
+    if (ids === undefined) { return; }
     if (desmarcarDemais) { this.limparSelecao(); }
-    if (!this.ok(this.Dados) || !this.ok(ids) || ids.length <= 0) { return; }
-    this.selIds(this.Dados, ids, selecionarFilhos);
+    if (!this.ok(this.dados) || !this.ok(ids) || ids.length <= 0) { return; }
+    this.selIds(this.dados, ids, selecionarFilhos);
   }
 
   private selIds(data: DataTree[] | undefined, ids: string[], selecionarFilhos: boolean = false): void {
@@ -234,15 +232,11 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public limparData(): void {
-    this.Dados = undefined;
-    this._idsSelecionados = undefined;
+    this.dados = undefined;
   }
 
   public loadAll(): void {
-    this.Dados?.forEach(f => this.loadAllAux(f));
-    if (this._idsSelecionados !== undefined) {
-      this.selecionarIds(this._idsSelecionados);
-    }
+    this.dados?.forEach(d => this.loadAllAux(d));
   }
 
   private loadAllAux(data: DataTree | undefined): void {
@@ -272,7 +266,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public setAllJaClicado(jaClicado: boolean = true): void {
-    this.setAllJaClicadoAux(this._dados, jaClicado);
+    this.setAllJaClicadoAux(this.dados, jaClicado);
   }
   private setAllJaClicadoAux(data: DataTree[] | undefined, jaClicado: boolean): void {
     if (data === null || data === undefined || data.length <= 0) { return; }
@@ -286,5 +280,9 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   //#endregion
 
   private ok = (el: any): boolean => el !== undefined && el !== null && el;
+
+  public trackItem(index: number, item: DataTree) {
+    return item.id;
+  }
 
 }

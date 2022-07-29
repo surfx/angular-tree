@@ -1,8 +1,8 @@
 
-<app-arvore-simple-data [Dados]="dados" [ExibirCheckBox]="true" #tree_simple></app-arvore-simple-data>
+<app-arvore-simple-data [dados]="data" [ExibirCheckBox]="true" #tree_simple></app-arvore-simple-data>
 
 <br /><br />
-<a href="#" (click)="getSel()">getSel()</a><br />
+<a href="#" (click)="getMapSelecionados()">getMapSelecionados()</a><br />
 <a href="#" (click)="getIdSelecionados()">getIdSelecionados()</a>
 
 
@@ -15,8 +15,6 @@
 <a href="#" (click)="loadInitialData()">loadInitialData()</a><br />
 * <a href="#" (click)="loadAll()">loadAll()</a><br />
 <a href="#" (click)="loadAllTree()">loadAllTree()</a><br />
-
-<a href="#" (click)="testeIds()">testeIds()</a><br />
 
 <br /><br />
 <input type="text" (change)="pesquisarArvore($event)" /><br />
