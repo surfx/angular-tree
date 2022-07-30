@@ -1,4 +1,5 @@
 import { Subject } from "rxjs";
+import { FilhoAdicionadoService } from "../servicos/filho-adicionado.service";
 
 /**
  * Nó da Árvore
@@ -8,16 +9,16 @@ export class DataTree {
     id: string;
     texto: string = '';
     selecionado: boolean = false;
-    jaClicado: boolean = false;
-
+    jaClicado: boolean = false; // evitar sub loads (load filho)
     aberto: boolean = true;
     isLoading: boolean = false;
-
     //pai?: Dados = undefined; - não precisa e pode gerar recursividade em loop eterno
     filhos?: DataTree[] = undefined;
 
     // acionado cada vez que um filho é adicionado
     public filhoAdicionado: Subject<DataTree> = new Subject<DataTree>();
+
+    filhoAddServ: FilhoAdicionadoService | undefined;
 
     constructor(id: string, texto: string = '') {
         this.id = id;
@@ -35,6 +36,8 @@ export class DataTree {
         filho.selecionado = this.selecionado;
         this.filhos.push(filho);
         this.filhoAdicionado.next(filho);
+
+        this.filhoAddServ?.emitir(filho);
     }
 
     public selecionarFilhos = () => {
@@ -72,6 +75,13 @@ export class DataTree {
             }
         }
         return true;
+    }
+
+    public clone(): DataTree {
+        let rt: DataTree = new DataTree(this.id, this.texto);
+        rt.selecionado = this.selecionado;
+        rt.jaClicado = this.jaClicado;
+        return rt;
     }
 
     public toString = (): string => {

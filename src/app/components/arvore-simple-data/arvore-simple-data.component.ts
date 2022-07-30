@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
+import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
+import { FilhoAdicionadoService } from 'src/app/servicos/filho-adicionado.service';
+import { IdsSelecionadosService } from 'src/app/servicos/idsselecionados.service';
 
-import { DadosArvoreServiceService } from 'src/app/servicos/dados-arvore-service.service';
 
 @Component({
   selector: 'app-arvore-simple-data',
@@ -11,13 +13,6 @@ import { DadosArvoreServiceService } from 'src/app/servicos/dados-arvore-service
 })
 export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
-  // verificar o filtro e subloads
-  // verificar items já marcados, antes e depois dos filtros / subloads
-  // o controle de itens selecionados tem que ser feito dentro deste componente
-  // o controle deve ser fino, ou seja, ao clicar e selecionar um item, o mesmo deve ir para 
-  // um set de ids de itens selecionados, e ao ser deselecionado, removido do set
-  // itens podem vir pré-selecionados através da propriedade 'dados' e da função 'setData'
-
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
 
   //@Input('dados') dados: DataTree[] | undefined;
@@ -25,16 +20,23 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   @Input('dados')
   set dados(data: DataTree[] | undefined) {
     this._dados = Object.assign([], data);
+    this._dados.forEach(d => this.setEventEmitter(d));
   }
   get dados(): DataTree[] | undefined { return this._dados; }
 
+  // add filho
   private _subscriptions: Subscription[] = [];
 
-  constructor(private service: DadosArvoreServiceService) { }
-
-  ngOnInit(): void {
-
+  constructor(
+    private service: DadosArvoreService,
+    private idsSel: IdsSelecionadosService,
+    private filhoAddServ: FilhoAdicionadoService) {
+    filhoAddServ.filhoAdicionadoEvent.subscribe(fadd => {
+      this.selecionarItens(fadd);
+    });
   }
+
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     if (this._subscriptions !== undefined && this._subscriptions.length > 0) {
@@ -51,6 +53,25 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     if (ajustarLoading && this.dados !== undefined) {
       this.ajustarLoadingJaClicado(this.dados);
     }
+    this.dados.forEach(d => this.setEventEmitter(d));
+
+    // manter estado dos selecionados
+    this.limparSelecao(false);
+    this.selecionarIds(this.idsSel.getIdsSelecionados());
+  }
+
+  private setEventEmitter(item: DataTree): void {
+    if (item === undefined) { return; }
+    item.filhoAddServ = this.filhoAddServ;
+    if (item.temFilhos()) {
+      item.filhos?.forEach(f => this.setEventEmitter(f));
+    }
+    item.filhoAdicionado.subscribe(fadd => this.setEventEmitter(fadd));
+  }
+
+  private selecionarItens(item: DataTree) {
+    let idsSel: string[] | undefined = this.idsSel.getIdsSelecionados();
+    this.selecionarIds(idsSel);
   }
 
   public getImg(item: DataTree): string {
@@ -128,9 +149,23 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     item.selecionado = !item.selecionado;
     item.selecionarFilhos();
 
-    // não funciona (!) porque existem uma recursão de componentes aqui (!)
-    console.log(this.dados);
-    console.log('---------------------');
+    // manter estado dos selecionados
+    this.auxIdsSelecionados(item);
+  }
+
+  private auxIdsSelecionados(item: DataTree): void {
+    if (item === null || item === undefined) { return; }
+    if (item.selecionado) {
+      this.idsSel.addIdSelecionado(item.id);
+    } else {
+      this.idsSel.removerIdSelecionado(item.id);
+    }
+    if (item.temFilhos()) {
+      item.filhos?.forEach(f => this.auxIdsSelecionados(f));
+    }
+    // item.filhoAdicionado.subscribe(fadd => {
+    //   this.auxIdsSelecionados(fadd);
+    // });
   }
 
   private loadData(id: string): DataTree[] | undefined {
@@ -191,12 +226,16 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     return rt;
   }
 
-  public limparSelecao(): void {
+  public limparSelecao(limparService: boolean = true): void {
     this.selecionarDados(this.dados, false);
+    if (limparService) { this.idsSel.clearData(); }
   }
 
   public selecionarTodos(): void {
     this.selecionarDados(this.dados, true);
+
+    // manter estado dos selecionados
+    this.dados?.forEach(d => this.auxIdsSelecionados(d));
   }
 
   private selecionarDados(data: DataTree[] | undefined, selecionar: boolean): void {
@@ -211,9 +250,12 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public selecionarIds(ids: string[] | undefined, desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
     if (ids === undefined) { return; }
-    if (desmarcarDemais) { this.limparSelecao(); }
+    if (desmarcarDemais) { this.limparSelecao(true); }
     if (!this.ok(this.dados) || !this.ok(ids) || ids.length <= 0) { return; }
     this.selIds(this.dados, ids, selecionarFilhos);
+
+    // manter estado dos selecionados
+    this.dados?.forEach(d => this.auxIdsSelecionados(d));
   }
 
   private selIds(data: DataTree[] | undefined, ids: string[], selecionarFilhos: boolean = false): void {
@@ -232,7 +274,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   }
 
   public limparData(): void {
-    this.dados = undefined;
+    this.dados = [];
   }
 
   public loadAll(): void {
@@ -242,6 +284,11 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
   private loadAllAux(data: DataTree | undefined): void {
     if (!this.ok(data) || data === undefined) { return; }
     this.clickLabel(data);
+
+    // manter estado dos selecionados
+    this.limparSelecao(false);
+    this.selecionarIds(this.idsSel.getIdsSelecionados());
+
     if (data.temFilhos()) {
       data.filhos?.forEach(f => {
         this.loadAllAux(f);

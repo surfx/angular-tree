@@ -4,7 +4,7 @@ import { DataTree } from '../entidades/data-tree';
 @Injectable({
   providedIn: 'root'
 })
-export class DadosArvoreServiceService {
+export class DadosArvoreService {
 
   constructor() { }
 

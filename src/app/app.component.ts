@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
 import { DataTree } from './entidades/data-tree';
-import { DadosArvoreServiceService } from './servicos/dados-arvore-service.service';
+import { DadosArvoreService } from './servicos/dados-arvore.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,7 @@ export class AppComponent {
   data: DataTree[] | undefined;
   alldata: DataTree[] | undefined;
 
-  constructor(private service: DadosArvoreServiceService) {
+  constructor(private service: DadosArvoreService) {
     this.data = this.service.getInitialData();
     this.alldata = this.service.getData();
   }
@@ -42,7 +42,7 @@ export class AppComponent {
   }
 
   public limparSelecao(): void {
-    this.treeSimple?.limparSelecao();
+    this.treeSimple?.limparSelecao(true);
   }
 
   public selecionarTodos(): void {
@@ -76,9 +76,11 @@ export class AppComponent {
       return;
     }
     let temp: DataTree[] | undefined = this.service.filtrarData(valor);
-    console.log(temp);
+    console.log('temp: ', temp);
     if (temp === undefined) { return; }
+    let idsS = this.treeSimple?.getIdSelecionados();
     this.treeSimple?.setData(temp, true);
+    this.treeSimple?.selecionarIds(idsS);
   }
 
   public loadAllTree(): void {
