@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
 import { DataTree } from './entidades/data-tree';
 import { DadosArvoreService } from './servicos/dados-arvore.service';
-import { IdsSelecionadosService } from './servicos/idsselecionados.service';
+import { IdsSelecionadosService } from './servicos/ids-selecionados.service';
 
 @Component({
   selector: 'app-root',

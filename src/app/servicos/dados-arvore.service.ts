@@ -88,12 +88,11 @@ export class DadosArvoreService {
       let aux = this.loadFilhosAux(id, d.filhos);
       if (aux) {
         // suprimir os filhos (para teste)
-        aux.forEach(a => 
-          {
-            a.selecionado = false;
-            rt?.push(new DataTree(a.id, a.texto));
-          }
-        ); 
+        aux.forEach(a => {
+          a.selecionado = false;
+          rt?.push(new DataTree(a.id, a.texto));
+        }
+        );
       }
     });
 

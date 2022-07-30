@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { IdsSelecionadosService } from 'src/app/servicos/idsselecionados.service';
+import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
 
 
 @Component({
@@ -11,6 +11,8 @@ import { IdsSelecionadosService } from 'src/app/servicos/idsselecionados.service
   styleUrls: ['./arvore-simple-data.component.css']
 })
 export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
+
+  // Ajustar o serviço 'DadosArvoreService' para simular o load com wait
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;
