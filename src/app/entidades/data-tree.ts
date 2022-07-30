@@ -1,5 +1,4 @@
 import { Subject } from "rxjs";
-import { FilhoAdicionadoService } from "../servicos/filho-adicionado.service";
 
 /**
  * Nó da Árvore
@@ -18,8 +17,6 @@ export class DataTree {
     // acionado cada vez que um filho é adicionado
     public filhoAdicionado: Subject<DataTree> = new Subject<DataTree>();
 
-    filhoAddServ: FilhoAdicionadoService | undefined;
-
     constructor(id: string, texto: string = '') {
         this.id = id;
         this.texto = texto;
@@ -36,8 +33,6 @@ export class DataTree {
         filho.selecionado = this.selecionado;
         this.filhos.push(filho);
         this.filhoAdicionado.next(filho);
-
-        this.filhoAddServ?.emitir(filho);
     }
 
     public selecionarFilhos = () => {

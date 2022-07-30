@@ -9,7 +9,10 @@
             <img src="../../../assets/imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
         </li>
         <ng-template [ngIf]="item.temFilhos() && item.aberto">
-            <app-arvore-simple-data [dados]="item.filhos" [ExibirCheckBox]="ExibirCheckBox"></app-arvore-simple-data>
+            <app-arvore-simple-data 
+                [dados]="item.filhos" 
+                [ExibirCheckBox]="ExibirCheckBox" 
+                [ControlarSelecionados]="ControlarSelecionados"></app-arvore-simple-data>
         </ng-template>
     </ul>
 </ng-template>

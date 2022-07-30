@@ -75,6 +75,7 @@ export class DadosArvoreService {
         return;
       }
       if (d === undefined || d.filhos == undefined) { return; }
+      d.selecionado = false;
       if (d.id === id) {
         d.filhos.forEach(f => rt?.push(new DataTree(f.id, f.texto))); // suprimir os filhos (para teste)
         return;
@@ -86,7 +87,13 @@ export class DadosArvoreService {
 
       let aux = this.loadFilhosAux(id, d.filhos);
       if (aux) {
-        aux.forEach(a => rt?.push(new DataTree(a.id, a.texto))); // suprimir os filhos (para teste)
+        // suprimir os filhos (para teste)
+        aux.forEach(a => 
+          {
+            a.selecionado = false;
+            rt?.push(new DataTree(a.id, a.texto));
+          }
+        ); 
       }
     });
 

@@ -1,8 +1,7 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { FilhoAdicionadoService } from 'src/app/servicos/filho-adicionado.service';
 import { IdsSelecionadosService } from 'src/app/servicos/idsselecionados.service';
 
 
@@ -14,13 +13,13 @@ import { IdsSelecionadosService } from 'src/app/servicos/idsselecionados.service
 export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
+  @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;
 
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
   @Input('dados')
   set dados(data: DataTree[] | undefined) {
     this._dados = Object.assign([], data);
-    this._dados.forEach(d => this.setEventEmitter(d));
   }
   get dados(): DataTree[] | undefined { return this._dados; }
 
@@ -29,12 +28,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   constructor(
     private service: DadosArvoreService,
-    private idsSel: IdsSelecionadosService,
-    private filhoAddServ: FilhoAdicionadoService) {
-    filhoAddServ.filhoAdicionadoEvent.subscribe(fadd => {
-      this.selecionarItens(fadd);
-    });
-  }
+    private idsSelServ: IdsSelecionadosService) { }
 
   ngOnInit(): void { }
 
@@ -50,28 +44,20 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
     this.dados = Object.assign([], data);
+    if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
     if (ajustarLoading && this.dados !== undefined) {
       this.ajustarLoadingJaClicado(this.dados);
     }
-    this.dados.forEach(d => this.setEventEmitter(d));
 
-    // manter estado dos selecionados
-    this.limparSelecao(false);
-    this.selecionarIds(this.idsSel.getIdsSelecionados());
+    this.selecionarFromService();
   }
 
-  private setEventEmitter(item: DataTree): void {
+  private limparSelecionadosEntrada(item: DataTree | undefined): void {
     if (item === undefined) { return; }
-    item.filhoAddServ = this.filhoAddServ;
-    if (item.temFilhos()) {
-      item.filhos?.forEach(f => this.setEventEmitter(f));
+    item.selecionado = false;
+    if (item.temFilhos() && item.filhos !== undefined) {
+      item.filhos.forEach(f => this.limparSelecionadosEntrada(f));
     }
-    item.filhoAdicionado.subscribe(fadd => this.setEventEmitter(fadd));
-  }
-
-  private selecionarItens(item: DataTree) {
-    let idsSel: string[] | undefined = this.idsSel.getIdsSelecionados();
-    this.selecionarIds(idsSel);
   }
 
   public getImg(item: DataTree): string {
@@ -122,6 +108,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
         item.isLoading = false;
         if (filhos !== null && filhos !== undefined && filhos.length > 0) {
           for (let i = 0; i < filhos.length; i++) {
+            filhos[i].selecionado = false;
             item.addFilho(filhos[i]);
           }
         }
@@ -149,23 +136,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     item.selecionado = !item.selecionado;
     item.selecionarFilhos();
 
-    // manter estado dos selecionados
-    this.auxIdsSelecionados(item);
-  }
-
-  private auxIdsSelecionados(item: DataTree): void {
-    if (item === null || item === undefined) { return; }
-    if (item.selecionado) {
-      this.idsSel.addIdSelecionado(item.id);
-    } else {
-      this.idsSel.removerIdSelecionado(item.id);
+    if (this.ControlarSelecionados) {
+      // manter estado dos selecionados
+      this.idsSelServ.auxIdsSelecionados(item);
     }
-    if (item.temFilhos()) {
-      item.filhos?.forEach(f => this.auxIdsSelecionados(f));
-    }
-    // item.filhoAdicionado.subscribe(fadd => {
-    //   this.auxIdsSelecionados(fadd);
-    // });
   }
 
   private loadData(id: string): DataTree[] | undefined {
@@ -228,14 +202,12 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public limparSelecao(limparService: boolean = true): void {
     this.selecionarDados(this.dados, false);
-    if (limparService) { this.idsSel.clearData(); }
+    if (limparService && this.ControlarSelecionados) { this.idsSelServ.clearData(); }
   }
 
   public selecionarTodos(): void {
     this.selecionarDados(this.dados, true);
-
-    // manter estado dos selecionados
-    this.dados?.forEach(d => this.auxIdsSelecionados(d));
+    this.atualizarServicoSelecionados();
   }
 
   private selecionarDados(data: DataTree[] | undefined, selecionar: boolean): void {
@@ -254,8 +226,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     if (!this.ok(this.dados) || !this.ok(ids) || ids.length <= 0) { return; }
     this.selIds(this.dados, ids, selecionarFilhos);
 
-    // manter estado dos selecionados
-    this.dados?.forEach(d => this.auxIdsSelecionados(d));
+    this.atualizarServicoSelecionados();
   }
 
   private selIds(data: DataTree[] | undefined, ids: string[], selecionarFilhos: boolean = false): void {
@@ -279,15 +250,13 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
 
   public loadAll(): void {
     this.dados?.forEach(d => this.loadAllAux(d));
+    if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
+    this.selecionarFromService();
   }
 
   private loadAllAux(data: DataTree | undefined): void {
     if (!this.ok(data) || data === undefined) { return; }
     this.clickLabel(data);
-
-    // manter estado dos selecionados
-    this.limparSelecao(false);
-    this.selecionarIds(this.idsSel.getIdsSelecionados());
 
     if (data.temFilhos()) {
       data.filhos?.forEach(f => {
@@ -299,6 +268,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
         this.loadAllAux(fadd);
       });
     this._subscriptions.push(subs);
+
+    this.selecionarFromService();
   }
 
   //#region ajustes Ja Clicado
@@ -323,6 +294,20 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
         this.ajustarLoadingJaClicado(d.filhos);
       }
     });
+  }
+  //#endregion
+
+  //#region serviço selecionados
+  private atualizarServicoSelecionados(): void {
+    if (!this.ControlarSelecionados) { return; }
+    this.idsSelServ.auxIdsSelecionadosData(this.dados);
+  }
+
+  private selecionarFromService(): void {
+    if (!this.ControlarSelecionados) { return; }
+    // manter estado dos selecionados
+    this.limparSelecao(false);
+    this.selecionarIds(this.idsSelServ.getIdsSelecionados());
   }
   //#endregion
 

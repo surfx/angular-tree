@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
 import { DataTree } from './entidades/data-tree';
 import { DadosArvoreService } from './servicos/dados-arvore.service';
+import { IdsSelecionadosService } from './servicos/idsselecionados.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,10 @@ export class AppComponent {
   data: DataTree[] | undefined;
   alldata: DataTree[] | undefined;
 
-  constructor(private service: DadosArvoreService) {
+  constructor(
+    private service: DadosArvoreService,
+    private idsSelServ: IdsSelecionadosService
+  ) {
     this.data = this.service.getInitialData();
     this.alldata = this.service.getData();
   }
@@ -76,7 +80,23 @@ export class AppComponent {
       return;
     }
     let temp: DataTree[] | undefined = this.service.filtrarData(valor);
-    console.log('temp: ', temp);
+    if (temp === undefined) { return; }
+    let idsS = this.treeSimple?.getIdSelecionados();
+    this.treeSimple?.setData(temp, true);
+    this.treeSimple?.selecionarIds(idsS);
+  }
+
+  public onKeyupEvent(event: any): void {
+    if (event === undefined) {
+      this.loadInitialData();
+      return;
+    }
+    let valor = event.target.value;
+    if (valor === undefined || valor.length <= 0) {
+      this.loadInitialData();
+      return;
+    }
+    let temp: DataTree[] | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
     let idsS = this.treeSimple?.getIdSelecionados();
     this.treeSimple?.setData(temp, true);
@@ -84,7 +104,14 @@ export class AppComponent {
   }
 
   public loadAllTree(): void {
+    this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
     this.treeSimple?.loadAll();
+  }
+
+  //----
+  public getSelecionadosServico(): void {
+    if (this.idsSelServ === undefined) { return; }
+    console.log(this.idsSelServ.getIdsSelecionados());
   }
 
 }
