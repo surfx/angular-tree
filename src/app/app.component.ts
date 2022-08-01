@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
 import { DataTree } from './entidades/data-tree';
 import { DadosArvoreService } from './servicos/dados-arvore.service';
@@ -9,19 +10,26 @@ import { IdsSelecionadosService } from './servicos/ids-selecionados.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
 
   @ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
 
-  data: DataTree[] | undefined;
+  data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
 
   constructor(
     private service: DadosArvoreService,
     private idsSelServ: IdsSelecionadosService
   ) {
-    this.data = this.service.getInitialData();
+    this.data$ = this.service.getInitialData();
     this.alldata = this.service.getData();
+  }
+
+  ngAfterViewInit(): void {
+    this.data$?.subscribe(data => {
+      if (data === undefined) { return; }
+      this.treeSimple?.setData(data);
+    });
   }
 
   public getMapSelecionados() {
@@ -41,7 +49,7 @@ export class AppComponent {
   }
 
   // para o exemplo não vou retornar os subfilhos
-  public loadFilhos(id: string): DataTree[] | undefined {
+  public loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
     return this.service.loadFilhos(id);
   }
 
@@ -70,7 +78,12 @@ export class AppComponent {
   }
 
   public loadInitialData(): void {
-    this.treeSimple?.setData(this.service.getInitialData(), true);
+    let obs$ = this.service.getInitialData();
+    if (obs$ === undefined) { return; }
+    obs$.subscribe(data => {
+      if (data === undefined) { return; }
+      this.treeSimple?.setData(data, true);
+    });
   }
 
   public pesquisarArvore(event: any): void {

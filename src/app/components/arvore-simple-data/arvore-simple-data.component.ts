@@ -1,5 +1,5 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
@@ -11,8 +11,6 @@ import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.servic
   styleUrls: ['./arvore-simple-data.component.css']
 })
 export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
-
-  // Ajustar o serviço 'DadosArvoreService' para simular o load com wait
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;
@@ -91,8 +89,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     //item.selecionarFilhos();
   }
 
-  public clickLabel = (item: DataTree) => {
-    if (!this.ok(item)) { return; }
+  public clickLabel = (item: DataTree | undefined) => {
+    if (!this.ok(item) || item === undefined) { return; }
     //item.selecionado = !item.selecionado;
     //console.log('click li: ', item);
     item.aberto = true;
@@ -103,29 +101,40 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
       item.filhos = []; // evitar que filhos sejam re-adds
 
       // TODO: verificar filtros
-
-      // apenas para simular o loading
-      this.delay(300).then(any => {
-        let filhos = this.loadData(item.id);
+      let filhos$: Observable<DataTree[] | undefined> | undefined = this.loadData(item.id);
+      if (filhos$ !== null && filhos$ !== undefined) {
+        item.isLoading = true;
+        filhos$.forEach(filhos => {
+          item.isLoading = false;
+          if (filhos === undefined) { return; }
+          filhos.forEach(f => {
+            item.addFilho(f);
+          });
+          item.aberto = true;
+        });
+      } else {
         item.isLoading = false;
-        if (filhos !== null && filhos !== undefined && filhos.length > 0) {
-          for (let i = 0; i < filhos.length; i++) {
-            filhos[i].selecionado = false;
-            item.addFilho(filhos[i]);
-          }
-        }
-        item.aberto = true;
-      });
-
-      // let filhos = this.loadData(item.id);
-      // item.isLoading = false;
-      // if (filhos !== null && filhos !== undefined && filhos.length > 0) {
-      //   for (let i = 0; i < filhos.length; i++) {
-      //     item.addFilho(filhos[i]);
-      //   }
-      // }
-      // item.aberto = true;
+      }
     }
+
+    // this.delay(3000).then(any => {
+    //   item.aberto = true;
+    //   console.log("----------------------------------");
+    //   item.selecionado = true;
+    //   console.log(item);
+    //   console.log("----------------------------------");
+    //   this.dados = this._dados;
+    // });
+
+    this.delay(3000).then(any => {
+      console.log("----------------------------------");
+      if (this._dados !== undefined && this._dados[0] != undefined) {
+        this._dados[0].addFilho(new DataTree('1545', 'f novo'));
+        this._dados[0].aberto=true;
+        this._dados[0].jaClicado=true;
+      }
+      console.log("----------------------------------");
+    });
 
     //item.selecionado = true;
     item.jaClicado = true;
@@ -144,11 +153,12 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadData(id: string): DataTree[] | undefined {
+  private loadData(id: string): Observable<DataTree[] | undefined> | undefined {
     if (id === null || id === undefined) { return; }
     return this.service.loadFilhos(id);
   }
 
+  //this.delay(300).then(any => {
   async delay(ms: number) {
     await new Promise<void>(resolve => setTimeout(() => resolve(), ms));
   }

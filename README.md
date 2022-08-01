@@ -45,3 +45,4 @@ typescript                      4.7.4
 
 - [Iconscout](https://iconscout.com/icons/arrow)
 - [Projeto Git](https://github.com/surfx/angular-tree)
+- [Multiple ways to Create an Observable](https://www.cloudhadoop.com/angular-observable-delay-example/)

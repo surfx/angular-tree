@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { delay, Observable, of } from 'rxjs';
 import { DataTree } from '../entidades/data-tree';
 
 @Injectable({
@@ -47,7 +48,7 @@ export class DadosArvoreService {
   }
 
   // nós iniciais da árvore, sem filhos
-  public getInitialData(): DataTree[] | undefined {
+  public getInitialData(): Observable<DataTree[] | undefined> | undefined {
     let dadosAux: DataTree[] | undefined = this.getData();
     if (dadosAux === undefined) { return undefined; }
 
@@ -56,14 +57,15 @@ export class DadosArvoreService {
       if (d === undefined || d === null) { return; }
       rt.push(new DataTree(d.id, d.texto)); // suprimir os filhos (para teste)
     });
-    return rt;
+    return of(rt).pipe(delay(400));
   }
 
   // para o exemplo não vou retornar os subfilhos
-  public loadFilhos(id: string): DataTree[] | undefined {
+  public loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
     let dadosAux: DataTree[] | undefined = this.convert(this.jsonData); // base de dados
     if (id === null || id === undefined || dadosAux === undefined) { return undefined; }
-    return this.loadFilhosAux(id, dadosAux);
+    let rt = this.loadFilhosAux(id, dadosAux);
+    return of(rt).pipe(delay(400));
   }
 
   private loadFilhosAux(id: string, data: DataTree[]): DataTree[] | undefined {

@@ -2,8 +2,8 @@
 <input type="text" (change)="pesquisarArvore($event)" (keyup)="onKeyupEvent($event)" /><br /><br />
 
 
+<!-- [dados]="data$ | async" -->
 <app-arvore-simple-data 
-    [dados]="data" 
     [ExibirCheckBox]="true" 
     [ControlarSelecionados]="true"
     #tree_simple></app-arvore-simple-data>
@@ -63,9 +63,6 @@
 
 
 <br /><br />
-
-<br /><br />
-
 <br /><br />
 
 
