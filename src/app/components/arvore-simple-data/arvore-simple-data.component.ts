@@ -99,7 +99,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   }
   //#endregion
 
-  public clickLabel = (item: DataTree | undefined) => {
+  public clickLabel = (item: DataTree | undefined, controlCheck: boolean = false) => {
     if (!this.ok(item) || item === undefined) { return; }
     //item.selecionado = !item.selecionado;
     //console.log('click li: ', item);
@@ -112,6 +112,14 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     //item.aberto = !item.aberto;
 
     //item.selecionarFilhos();
+    if (controlCheck) {
+      item.selecionado = !item.selecionado;
+
+      if (this.ControlarSelecionados) {
+        // manter estado dos selecionados
+        this.idsSelServ.auxIdsSelecionados(item);
+      }
+    }
   }
 
   private loadAndSetFilhos(item: DataTree | undefined): void {
@@ -129,7 +137,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
       item.isLoading = false;
       if (filhosData === undefined) { return; }
       filhosData.forEach(f => {
-        item.addFilho(f);
+        item.addFilho(f, false);
       });
       item.aberto = true;
     });
@@ -330,7 +338,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   }
 
   public getCssClass(): string {
-    return "tree_two_little" + (this.modal_style ? ' tree_two_little_modal': '');
+    return "tree_two_little" + (this.modal_style ? ' tree_two_little_modal' : '');
   }
 
 }

@@ -56,7 +56,7 @@ export class TestesComponent implements OnInit {
       if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
       let filhosAux = this.gerarArvoreRandomica(passo + 1, maxStack);
       if (filhosAux.length > 0) {
-        filhosAux.forEach(fadd => dtTree.addFilho(fadd));
+        filhosAux.forEach(fadd => dtTree.addFilho(fadd, false));
       }
       rt.push(dtTree);
     }
@@ -95,7 +95,7 @@ export class TestesComponent implements OnInit {
         let aux = this.convert(j.chields);
         if (ok(aux) && aux !== undefined && aux?.length > 0) {
           for (let y = 0; y < aux.length; y++) {
-            d.addFilho(aux[y]);
+            d.addFilho(aux[y], false);
           }
         }
       }

@@ -26,11 +26,11 @@ export class DataTree {
         return this.filhos !== null && this.filhos !== undefined && this.filhos.length > 0;
     }
 
-    public addFilho = (filho: DataTree) => {
+    public addFilho = (filho: DataTree, selecaoPai: boolean) => {
         if (filho === null || filho === undefined) { return; }
         if (this.filhos === null || this.filhos == undefined) { this.filhos = []; }
         //filho.pai = this;
-        filho.selecionado = this.selecionado;
+        if (selecaoPai) { filho.selecionado = this.selecionado; }
         this.filhos.push(filho);
         this.filhoAdicionado.next(filho);
     }

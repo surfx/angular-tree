@@ -63,7 +63,7 @@ export class PaginainicialComponent implements AfterViewInit {
 
   public selecionarIds(): void {
     let ids: string[] = ['1', '1.2', '3.3', '3.1'];
-    this.treeSimple?.selecionarIds(ids, false, false);
+    this.treeSimple?.selecionarIds(ids, true, false);
   }
 
   public limparData(): void {

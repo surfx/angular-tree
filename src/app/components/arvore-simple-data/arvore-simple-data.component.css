@@ -46,6 +46,11 @@
     height: 0.8em;
 }
 
+.tree_item_text_a {
+    color: black;
+    text-decoration: none;
+}
+
 /* deixa a árvore colada na borda esquerda */
 .tree_two_little_modal {
     padding-left: 0;

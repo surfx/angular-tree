@@ -14,8 +14,9 @@ export class DadosArvoreService {
   private jsonData;
 
   constructor() {
-    //this.jsonData = this.getJsonDataTeste2();
-    this.jsonData = this.gerarArvoreJsonRandomica();
+    this.jsonData = this.getJsonDataTeste1();
+    // this.jsonData = this.getJsonDataTeste2();
+    // this.jsonData = this.gerarArvoreJsonRandomica();
   }
 
   private getJsonDataTeste1() {
@@ -192,7 +193,7 @@ export class DadosArvoreService {
       if (!Util.getRandomBoolean()) { continue; }
       let filhosAux = this.gerarArvoreRandomica(passo + 1, maxStack);
       if (filhosAux.length > 0) {
-        filhosAux.forEach(fadd => dtTree.addFilho(fadd));
+        filhosAux.forEach(fadd => dtTree.addFilho(fadd, false));
       }
       rt.push(dtTree);
     }
@@ -289,7 +290,7 @@ export class DadosArvoreService {
         let aux = this.convert(j.chields);
         if (ok(aux) && aux !== undefined && aux?.length > 0) {
           for (let y = 0; y < aux.length; y++) {
-            d.addFilho(aux[y]);
+            d.addFilho(aux[y], false);
           }
         }
       }
