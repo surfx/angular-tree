@@ -4,11 +4,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
+import { PaginainicialComponent } from './components/paginainicial/paginainicial.component';
+import { PaginamodalComponent } from './components/paginamodal/paginamodal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ArvoreSimpleDataComponent
+    ArvoreSimpleDataComponent,
+    PaginainicialComponent,
+    PaginamodalComponent
   ],
   imports: [
     BrowserModule,

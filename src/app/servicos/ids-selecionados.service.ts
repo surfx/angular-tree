@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DataTree } from '../entidades/data-tree';
+import { ItemSelecionado } from '../entidades/item-selecionado';
 
 
 @Injectable({
@@ -7,18 +8,28 @@ import { DataTree } from '../entidades/data-tree';
 })
 export class IdsSelecionadosService {
 
-  private _idsSelecionados: Set<string> = new Set<string>();
+  private _idsSelecionados: Map<string, ItemSelecionado> = new Map<string, ItemSelecionado>();
 
   constructor() { }
 
   public getIdsSelecionados(): string[] | undefined {
-    return [...this._idsSelecionados];
+    return [...this._idsSelecionados.keys()];
   }
 
-  public addIdSelecionado(id: string): void {
+  public getItemsSelecionados(): ItemSelecionado[] | undefined {
+    return [...this._idsSelecionados.values()];
+  }
+
+  public addIdSelecionado(id: string, texto: string): void {
     if (id === null || id === undefined || id.length <= 0) { return; }
-    if (this._idsSelecionados === undefined || this._idsSelecionados === null) { this._idsSelecionados = new Set<string>(); }
-    this._idsSelecionados.add(id);
+    if (this._idsSelecionados === undefined || this._idsSelecionados === null) { this._idsSelecionados = new Map<string, ItemSelecionado>(); }
+    this._idsSelecionados.set(id, new ItemSelecionado(id, texto));
+  }
+
+  public addItemSelecionado(item: ItemSelecionado): void {
+    if (item === null || item === undefined || item.id === undefined || item.id.length <= 0) { return; }
+    if (this._idsSelecionados === undefined || this._idsSelecionados === null) { this._idsSelecionados = new Map<string, ItemSelecionado>(); }
+    this._idsSelecionados.set(item.id, item);
   }
 
   public removerIdSelecionado(id: string): void {
@@ -39,7 +50,7 @@ export class IdsSelecionadosService {
   public auxIdsSelecionados(item: DataTree | undefined): void {
     if (item === null || item === undefined) { return; }
     if (item.selecionado) {
-      this.addIdSelecionado(item.id);
+      this.addIdSelecionado(item.id, item.texto);
     } else {
       this.removerIdSelecionado(item.id);
     }
@@ -51,10 +62,10 @@ export class IdsSelecionadosService {
     // });
   }
 
-  public isSelecionado(item: DataTree | undefined): boolean {
-    if (item === undefined || this._idsSelecionados === undefined || this._idsSelecionados.size <= 0) { return false; }
-    if (item.id === undefined || item.id === null || item.id.length <= 0) { return false; }
-    return this._idsSelecionados.has(item.id);
-  }
+  // public isSelecionado(item: DataTree | undefined): boolean {
+  //   if (item === undefined || this._idsSelecionados === undefined || this._idsSelecionados.size <= 0) { return false; }
+  //   if (item.id === undefined || item.id === null || item.id.length <= 0) { return false; }
+  //   return this._idsSelecionados.has(item.id);
+  // }
 
 }

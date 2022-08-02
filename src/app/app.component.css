@@ -3,12 +3,12 @@ a {
     color: black;
 }
 
-.sec_acoes {
+ul {
     display: flex;
-    width: 100vw;
+    padding-left: 5px;
 }
 
-.sec_acoes div {
-    justify-content: space-between;
-    margin-left: 30px;
+li {
+    display: block;
+    margin-right: 5px;
 }

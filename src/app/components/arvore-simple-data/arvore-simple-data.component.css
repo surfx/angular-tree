@@ -45,3 +45,8 @@
     width: 0.8em;
     height: 0.8em;
 }
+
+/* deixa a árvore colada na borda esquerda */
+/* .tree_two_little {
+    padding-left: 0;
+} */
