@@ -15,6 +15,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;
 
+  @Input('modal_style') modal_style: boolean = false;
+
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
   @Input('dados')
@@ -112,7 +114,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     //item.selecionarFilhos();
   }
 
-  private loadAndSetFilhos(item: DataTree | undefined):void{
+  private loadAndSetFilhos(item: DataTree | undefined): void {
     if (!this.ok(item) || item === undefined || item.id === undefined || item.jaClicado) { return; }
     item.isLoading = true;
     item.filhos = []; // evitar que filhos sejam re-adds
@@ -122,7 +124,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
       item.isLoading = false;
       return;
     }
-    
+
     filhos$.subscribe(filhosData => {
       item.isLoading = false;
       if (filhosData === undefined) { return; }
@@ -325,6 +327,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   public trackItem(index: number, item: DataTree) {
     return item.id;
+  }
+
+  public getCssClass(): string {
+    return "tree_two_little" + (this.modal_style ? ' tree_two_little_modal': '');
   }
 
 }

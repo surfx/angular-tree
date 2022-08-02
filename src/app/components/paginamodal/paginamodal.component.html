@@ -1,1 +1,24 @@
-<p>paginamodal works!</p>
+<button (click)="toggle()">
+    Mostrar modal
+</button>
+
+<br /><br />
+{{getSelecionadosServicoItemSelecionado()}}
+<br /><br />
+
+<ng-container *ngIf="mostrar">
+    <div class="modal">
+        <div class="modal_tree_component">
+            <app-arvore-simple-data 
+                [ExibirCheckBox]="true" 
+                [ControlarSelecionados]="true" 
+                [modal_style]="true"
+                #tree_simple
+            ></app-arvore-simple-data>
+        </div>
+        
+
+        <button (click)="toggle();">Fechar</button>
+    </div>
+    <div (click)="toggle()" class="overlay" *ngIf="showOverlay && mostrar"></div>
+</ng-container>

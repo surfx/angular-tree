@@ -1,5 +1,5 @@
 <ng-template [ngIf]="hasData">
-    <ul *ngFor="let item of dados; trackBy: trackItem" class="tree_two_little">
+    <ul *ngFor="let item of dados; trackBy: trackItem" [class]="getCssClass()">
         <li>
             <img [src]="getImg(item)" (click)="clickImg(item)" [class]="getImgClass(item)">
             <label (click)="clickLabel(item)">
@@ -12,7 +12,9 @@
             <app-arvore-simple-data 
                 [dados]="item.filhos" 
                 [ExibirCheckBox]="ExibirCheckBox" 
-                [ControlarSelecionados]="ControlarSelecionados"></app-arvore-simple-data>
+                [ControlarSelecionados]="ControlarSelecionados"
+                [modal_style]="modal_style"
+            ></app-arvore-simple-data>
         </ng-template>
     </ul>
 </ng-template>
