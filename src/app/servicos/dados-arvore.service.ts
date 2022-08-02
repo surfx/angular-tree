@@ -7,6 +7,9 @@ import { DataTree } from '../entidades/data-tree';
 })
 export class DadosArvoreService {
 
+  // apenas para simular um delay -> consulta a base de dados / service
+  private _delayService: number = 200;
+
   constructor() { }
 
   private jsonData = [
@@ -57,7 +60,7 @@ export class DadosArvoreService {
       if (d === undefined || d === null) { return; }
       rt.push(new DataTree(d.id, d.texto)); // suprimir os filhos (para teste)
     });
-    return of(rt).pipe(delay(400));
+    return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
   }
 
   // para o exemplo não vou retornar os subfilhos
@@ -65,7 +68,7 @@ export class DadosArvoreService {
     let dadosAux: DataTree[] | undefined = this.convert(this.jsonData); // base de dados
     if (id === null || id === undefined || dadosAux === undefined) { return undefined; }
     let rt = this.loadFilhosAux(id, dadosAux);
-    return of(rt).pipe(delay(400));
+    return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
   }
 
   private loadFilhosAux(id: string, data: DataTree[]): DataTree[] | undefined {
@@ -122,8 +125,9 @@ export class DadosArvoreService {
   }
 
   // --------------- filtrarData ---------------
-  public filtrarData(filtro: string): DataTree[] | undefined {
-    return this.filtrarDataAux(this.getData(), filtro);
+  public filtrarData(filtro: string): Observable<DataTree[] | undefined> | undefined {
+    let rt = this.filtrarDataAux(this.getData(), filtro);
+    return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
   }
 
   private filtrarDataAux(data: DataTree[] | undefined, filtro: string): DataTree[] | undefined {

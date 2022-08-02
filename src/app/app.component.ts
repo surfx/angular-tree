@@ -92,11 +92,14 @@ export class AppComponent implements AfterViewInit {
       this.loadAll();
       return;
     }
-    let temp: DataTree[] | undefined = this.service.filtrarData(valor);
+    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
     let idsS = this.treeSimple?.getIdSelecionados();
-    this.treeSimple?.setData(temp, true);
-    this.treeSimple?.selecionarIds(idsS);
+    temp.subscribe(dados => {
+      if (dados === undefined) { return; }
+      this.treeSimple?.setData(dados, true);
+      this.treeSimple?.selecionarIds(idsS);
+    });
   }
 
   public onKeyupEvent(event: any): void {
@@ -109,11 +112,14 @@ export class AppComponent implements AfterViewInit {
       this.loadInitialData();
       return;
     }
-    let temp: DataTree[] | undefined = this.service.filtrarData(valor);
+    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
     let idsS = this.treeSimple?.getIdSelecionados();
-    this.treeSimple?.setData(temp, true);
-    this.treeSimple?.selecionarIds(idsS);
+    temp.subscribe(dados => {
+      if (dados === undefined) { return; }
+      this.treeSimple?.setData(dados, true);
+      this.treeSimple?.selecionarIds(idsS);
+    });
   }
 
   public loadAllTree(): void {

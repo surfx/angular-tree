@@ -1,4 +1,4 @@
-<ng-template [ngIf]="hasData()">
+<ng-template [ngIf]="hasData">
     <ul *ngFor="let item of dados; trackBy: trackItem" class="tree_two_little">
         <li>
             <img [src]="getImg(item)" (click)="clickImg(item)" [class]="getImgClass(item)">
