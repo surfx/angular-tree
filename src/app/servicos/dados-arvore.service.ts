@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { delay, Observable, of } from 'rxjs';
 import { DataTree } from '../entidades/data-tree';
+import { Util } from '../util/util';
 
 @Injectable({
   providedIn: 'root'
@@ -12,32 +13,33 @@ export class DadosArvoreService {
 
   private jsonData;
 
-  constructor() { 
-    this.jsonData = this.getJsonDataTeste2();
+  constructor() {
+    //this.jsonData = this.getJsonDataTeste2();
+    this.jsonData = this.gerarArvoreJsonRandomica();
   }
 
   private getJsonDataTeste1() {
     return [
       {
-        id: '1', text: 'item 1', childs: [
+        id: '1', text: 'item 1', chields: [
           { id: '1.1', text: 'item 1.1' },
           { id: '1.2', text: 'item 1.2' },
           { id: '1.3', text: 'item 1.3' }
         ]
       },
       {
-        id: '2', text: 'item 2', childs: [
+        id: '2', text: 'item 2', chields: [
           { id: '2.1', text: 'item 2.1' },
           { id: '2.2', text: 'item 2.2' }
         ]
       },
       {
-        id: '3', text: 'item 3', childs: [
+        id: '3', text: 'item 3', chields: [
           { id: '3.1', text: 'item 3.1' },
           {
-            id: '3.2', text: 'item 3.2', childs: [
+            id: '3.2', text: 'item 3.2', chields: [
               {
-                id: '3.2.1', text: 'item 3.2.1', childs: [
+                id: '3.2.1', text: 'item 3.2.1', chields: [
                   { id: '3.2.1.1', text: 'item 3.2.1.1' },
                   { id: '3.2.2.1', text: 'item 3.2.2.1' }
                 ]
@@ -55,14 +57,20 @@ export class DadosArvoreService {
   private getJsonDataTeste2() {
     return [
       {
-        id: '1', text: 'GOVERNOS ESTADUAIS', childs: [
-          { id: '1.1', text: 'Governo do Estado de Acre - AC', childs: [
-            { id: '1.1.1', text: 'Secretaria de Segurança Pública do Acre', childs: [
-              {id: '1.1.1.1', text: 'Polícia Militar do Acre', childs: [
-                {id: '1.1.1.1.1', text: 'TESTE'}
-              ]}
-            ]}
-          ] },
+        id: '1', text: 'GOVERNOS ESTADUAIS', chields: [
+          {
+            id: '1.1', text: 'Governo do Estado de Acre - AC', chields: [
+              {
+                id: '1.1.1', text: 'Secretaria de Segurança Pública do Acre', chields: [
+                  {
+                    id: '1.1.1.1', text: 'Polícia Militar do Acre', chields: [
+                      { id: '1.1.1.1.1', text: 'TESTE' }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
           { id: '1.2', text: 'Corpo de Bombeiros Militar do Acre' },
           { id: '1.3', text: '100 Dp Teste Teste' },
           { id: '1.4', text: '101 Dp Teste' },
@@ -74,75 +82,139 @@ export class DadosArvoreService {
         ]
       },
       {
-        id: '2', text: 'Governo do Estado de Alagoas', childs: [
-          { id: '2.1', text: 'Secretaria de Segurança Pública da Defesa Social de Alagoas', childs: [
-            { id: '2.1.1', text: 'Polícia Militar de Alagoas' },
-            { id: '2.1.2', text: 'Corpo de Bombeiros Militar de Alagoas' },
-            { id: '2.1.3', text: 'Polícia Civil de Alagoas' },
-          ] },
-          { id: '2.2', text: 'Governo do Estado de Amapá' , childs: [
-            { id: '2.2.1', text: 'Secretaria de Segurança Pública da Justiça e Segurança Pública do Amapá', childs: [
-              { id: '2.2.1.1', text: 'Polícia Militar do Amapá' },
-              { id: '2.2.1.2', text: 'Corpo de Bombeiros Militar do Amapá' },
-              { id: '2.2.1.3', text: 'Polícia Civil do Amapá', childs: [
-                { id: '2.2.1.3.1', text: '1 DP' },
-                { id: '2.2.1.3.2', text: '2 DP' },
-                { id: '2.2.1.3.3', text: 'Distrito Policial - Intbo - Teste' }
-              ] },
-            ] },
-          ] }
+        id: '2', text: 'Governo do Estado de Alagoas', chields: [
+          {
+            id: '2.1', text: 'Secretaria de Segurança Pública da Defesa Social de Alagoas', chields: [
+              { id: '2.1.1', text: 'Polícia Militar de Alagoas' },
+              { id: '2.1.2', text: 'Corpo de Bombeiros Militar de Alagoas' },
+              { id: '2.1.3', text: 'Polícia Civil de Alagoas' },
+            ]
+          },
+          {
+            id: '2.2', text: 'Governo do Estado de Amapá', chields: [
+              {
+                id: '2.2.1', text: 'Secretaria de Segurança Pública da Justiça e Segurança Pública do Amapá', chields: [
+                  { id: '2.2.1.1', text: 'Polícia Militar do Amapá' },
+                  { id: '2.2.1.2', text: 'Corpo de Bombeiros Militar do Amapá' },
+                  {
+                    id: '2.2.1.3', text: 'Polícia Civil do Amapá', chields: [
+                      { id: '2.2.1.3.1', text: '1 DP' },
+                      { id: '2.2.1.3.2', text: '2 DP' },
+                      { id: '2.2.1.3.3', text: 'Distrito Policial - Intbo - Teste' }
+                    ]
+                  },
+                ]
+              },
+            ]
+          }
         ]
       },
       {
-        id: '3', text: 'Governo do Estado de Amazonas', childs: [
-          { id: '3.1', text: 'Secretaria de Segurança Pública do Amazonas', childs: [
-            { id: '3.1.1', text: 'Polícia Militar do Amazonas' },
-            { id: '3.1.2', text: 'Corpo de Bombeiros Militar do Amazonas' },
-            { id: '3.1.3', text: 'Polícia Civil do Amazonas', childs: [
-              { id: '3.1.3.1', text: '1º Distrito Policial - Manaus' }
-            ] }
-          ] },
+        id: '3', text: 'Governo do Estado de Amazonas', chields: [
           {
-            id: '3.2', text: 'Governo do Estado de Bahia', childs: [
+            id: '3.1', text: 'Secretaria de Segurança Pública do Amazonas', chields: [
+              { id: '3.1.1', text: 'Polícia Militar do Amazonas' },
+              { id: '3.1.2', text: 'Corpo de Bombeiros Militar do Amazonas' },
               {
-                id: '3.2.1', text: 'Secretaria de Segurança Pública de Bahia', childs: [
+                id: '3.1.3', text: 'Polícia Civil do Amazonas', chields: [
+                  { id: '3.1.3.1', text: '1º Distrito Policial - Manaus' }
+                ]
+              }
+            ]
+          },
+          {
+            id: '3.2', text: 'Governo do Estado de Bahia', chields: [
+              {
+                id: '3.2.1', text: 'Secretaria de Segurança Pública de Bahia', chields: [
                   { id: '3.2.1.1', text: 'Polícia Militar da Bahia' },
                   { id: '3.2.1.2', text: 'Corpo de Bombeiros Militar da Bahia' },
                   { id: '3.2.1.3', text: 'Polícia Civil da Bahia' }
                 ]
               },
-              { id: '3.2.2', text: 'Governo do Estado de Ceará' , childs: [
-                { id: '3.2.2.1', text: 'Secretaria de Segurança Pública da e Defesa Social do Ceará', childs: [
-                  { id: '3.2.2.1.1', text: 'Polícia Militar do Ceará' },
-                  { id: '3.2.2.1.2', text: 'Corpo de Bombeiros Militar do Ceará' },
-                  { id: '3.2.2.1.3', text: 'Polícia Civil do Ceará' }
-                ]},
-              ] }
+              {
+                id: '3.2.2', text: 'Governo do Estado de Ceará', chields: [
+                  {
+                    id: '3.2.2.1', text: 'Secretaria de Segurança Pública da e Defesa Social do Ceará', chields: [
+                      { id: '3.2.2.1.1', text: 'Polícia Militar do Ceará' },
+                      { id: '3.2.2.1.2', text: 'Corpo de Bombeiros Militar do Ceará' },
+                      { id: '3.2.2.1.3', text: 'Polícia Civil do Ceará' }
+                    ]
+                  },
+                ]
+              }
             ]
           },
-          { id: '3.3', text: 'Governo do Distrito Federal', childs: [
-            { id: '3.3.1', text: 'Secretaria de Estado de Segurança Pública e Defesa Social do Distrito Federal', childs: [
-              { id: '3.3.1.1', text: 'Polícia Militar do Distrito Federal', childs: [
-                { id: '3.3.1.1.1', text: 'Guarda Municipal' }  
-              ] },
-              { id: '3.3.1.2', text: 'Corpo de Bombeiros Militar do Distrito Federal' },
-              { id: '3.3.1.3', text: 'Polícia Civil do Distrito Federal', childs: [
-                { id: '3.3.1.3.1', text: '1º Distrito Policial' }  
-              ] },
-              { id: '3.3.1.4', text: 'Teste EO' },
-            ] },
-            { id: '3.3.2', text: 'Teste' }
-          ] },
-          { id: '3.4', text: 'Governo do Estado de Espírito Santo', childs: [
-            { id: '3.4.1', text: 'Secretaria de Segurança Pública e Defesa Social do Espírito Santo', childs: [
-              { id: '3.4.1.1', text: 'Polícia Militar do Espírito Santo' },
-              { id: '3.4.1.2', text: 'Corpo de Bombeiros Militar do Espírito Santo' },
-              { id: '3.4.1.3', text: 'Polícia Civil do Espírito Santo' }
-            ] }
-          ] }
+          {
+            id: '3.3', text: 'Governo do Distrito Federal', chields: [
+              {
+                id: '3.3.1', text: 'Secretaria de Estado de Segurança Pública e Defesa Social do Distrito Federal', chields: [
+                  {
+                    id: '3.3.1.1', text: 'Polícia Militar do Distrito Federal', chields: [
+                      { id: '3.3.1.1.1', text: 'Guarda Municipal' }
+                    ]
+                  },
+                  { id: '3.3.1.2', text: 'Corpo de Bombeiros Militar do Distrito Federal' },
+                  {
+                    id: '3.3.1.3', text: 'Polícia Civil do Distrito Federal', chields: [
+                      { id: '3.3.1.3.1', text: '1º Distrito Policial' }
+                    ]
+                  },
+                  { id: '3.3.1.4', text: 'Teste EO' },
+                ]
+              },
+              { id: '3.3.2', text: 'Teste' }
+            ]
+          },
+          {
+            id: '3.4', text: 'Governo do Estado de Espírito Santo', chields: [
+              {
+                id: '3.4.1', text: 'Secretaria de Segurança Pública e Defesa Social do Espírito Santo', chields: [
+                  { id: '3.4.1.1', text: 'Polícia Militar do Espírito Santo' },
+                  { id: '3.4.1.2', text: 'Corpo de Bombeiros Militar do Espírito Santo' },
+                  { id: '3.4.1.3', text: 'Polícia Civil do Espírito Santo' }
+                ]
+              }
+            ]
+          }
         ]
       },
     ];
+  }
+
+  private possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+  public gerarArvoreRandomica(passo: number = 0, maxStack = 4): DataTree[] {
+    if (passo >= maxStack) { return []; }
+    let rt: DataTree[] = [];
+
+    let numNodos = Util.getRandomInt(3, 15);
+    for (let i = 0; i < numNodos; i++) {
+      let dtTree = new DataTree(Util.getRandomInt(1, 1500) + '', Util.getRandomText(30, this.possible));
+      if (!Util.getRandomBoolean()) { continue; }
+      let filhosAux = this.gerarArvoreRandomica(passo + 1, maxStack);
+      if (filhosAux.length > 0) {
+        filhosAux.forEach(fadd => dtTree.addFilho(fadd));
+      }
+      rt.push(dtTree);
+    }
+    return rt;
+  }
+
+  public gerarArvoreJsonRandomica(passo: number = 0, maxStack = 4): any[] | undefined {
+    if (passo >= maxStack) { return undefined; }
+    let rt: any[] | undefined = [];
+
+    let numNodos = Util.getRandomInt(3, 15);
+    for (let i = 0; i < numNodos; i++) {
+      let dtTree: any = { id: Util.getRandomInt(1, 1500) + '', text: Util.getRandomText(30, this.possible), chields: undefined };
+      if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
+      let filhosAux = this.gerarArvoreJsonRandomica(passo + 1, maxStack);
+      if (filhosAux !== undefined && filhosAux.length > 0) {
+        dtTree.chields = filhosAux;
+      }
+      rt.push(dtTree);
+    }
+
+    return rt;
   }
 
   public getData(): DataTree[] | undefined {
@@ -203,22 +275,26 @@ export class DadosArvoreService {
     return rt;
   }
 
-  private convert(json: any[]): DataTree[] | undefined {
+  private convert(json: any[] | undefined): DataTree[] | undefined {
+    if (json === undefined) { return undefined; }
     let ok = (obj: any) => obj !== undefined && obj !== null;
     if (!ok(json) || json.length <= 0) { return undefined; }
     let rt: DataTree[] = [];
 
-    json.forEach(j => {
-      if (!ok(j) || !ok(j.id) || !ok(j.text)) { return; }
+    for (let i = 0; i < json.length; i++) {
+      let j = json[i];
+      if (!ok(j) || !ok(j.id) || !ok(j.text)) { continue; }
       let d: DataTree = new DataTree(j.id + '', j.text);
-      if (ok(j.childs)) {
-        let aux = this.convert(j.childs);
+      if (ok(j.chields)) {
+        let aux = this.convert(j.chields);
         if (ok(aux) && aux !== undefined && aux?.length > 0) {
-          aux.forEach(a => d.addFilho(a));
+          for (let y = 0; y < aux.length; y++) {
+            d.addFilho(aux[y]);
+          }
         }
       }
       rt.push(d);
-    });
+    };
 
     return rt;
   }

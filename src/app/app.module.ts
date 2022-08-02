@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
 import { PaginainicialComponent } from './components/paginainicial/paginainicial.component';
 import { PaginamodalComponent } from './components/paginamodal/paginamodal.component';
+import { TestesComponent } from './components/testes/testes.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ArvoreSimpleDataComponent,
     PaginainicialComponent,
-    PaginamodalComponent
+    PaginamodalComponent,
+    TestesComponent
   ],
   imports: [
     BrowserModule,
