@@ -52,8 +52,3 @@
     /* white-space: nowrap;
     overflow: hidden; */
 }
-
-/* deixa a árvore colada na borda esquerda */
-.tree_two_little_modal {
-    padding-left: 0;
-}

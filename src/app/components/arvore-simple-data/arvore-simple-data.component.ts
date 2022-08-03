@@ -17,9 +17,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   @Input('multiplaSelecao') multiplaSelecao: boolean | undefined;
   @Output() clearAllSel: EventEmitter<void> = new EventEmitter<void>(); // event para limpar a seleção de todos os componentes
 
-  // TODO: rever comportamento
-  @Input('modal_style') modal_style: boolean = false;
-
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
   @Input('dados')
@@ -370,11 +367,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   public trackItem(index: number, item: DataTree) {
     return item.id;
-  }
-
-  // TODO: rever isso (!)
-  public getCssClass(): string {
-    return "tree_two_little" + (this.modal_style ? ' tree_two_little_modal' : '');
   }
 
 }
