@@ -1,4 +1,4 @@
-import { AfterContentChecked, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentChecked, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
@@ -14,7 +14,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;
+  @Input('multiplaSelecao') multiplaSelecao: boolean | undefined;
+  @Output() clearAllSel: EventEmitter<void> = new EventEmitter<void>(); // event para limpar a seleção de todos os componentes
 
+  // TODO: rever comportamento
   @Input('modal_style') modal_style: boolean = false;
 
   //@Input('dados') dados: DataTree[] | undefined;
@@ -112,13 +115,18 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     //item.aberto = !item.aberto;
 
     //item.selecionarFilhos();
-    if (controlCheck) {
-      item.selecionado = !item.selecionado;
+    if (!controlCheck) { return; }
 
-      if (this.ControlarSelecionados) {
-        // manter estado dos selecionados
-        this.idsSelServ.auxIdsSelecionados(item);
-      }
+    let isSel = item.selecionado;
+    if (!this.multiplaSelecao) {
+      this.clearAllSel.emit();
+      this.limparSelecao(true);
+    }
+    item.selecionado = !isSel;
+
+    if (this.ControlarSelecionados) {
+      // manter estado dos selecionados
+      this.idsSelServ.auxIdsSelecionados(item);
     }
   }
 
@@ -144,8 +152,16 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   }
 
   public checkValue(item: DataTree) {
-    item.selecionado = !item.selecionado;
-    item.selecionarFilhos();
+    let isSel = item.selecionado;
+    if (!this.multiplaSelecao) {
+      this.clearAllSel.emit();
+      this.limparSelecao(true);
+    }
+
+    item.selecionado = !isSel;
+    if (this.multiplaSelecao) {
+      item.selecionarFilhos();
+    }
 
     if (this.ControlarSelecionados) {
       // manter estado dos selecionados
@@ -213,12 +229,25 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   //#endregion
 
   //#region aux selecionar
+  // Event
+  public clearAllSelEvent(): void {
+    if (this.multiplaSelecao) { return; }
+    this.limparSelecao(true);
+    if (this.clearAllSel !== undefined) {
+      this.clearAllSel.emit(); // propagar o evento aos pais
+    }
+  }
+
   public limparSelecao(limparService: boolean = true): void {
     this.selecionarDados(this.dados, false);
     if (limparService && this.ControlarSelecionados) { this.idsSelServ.clearData(); }
   }
 
   public selecionarTodos(): void {
+    if (!this.multiplaSelecao) {
+      console.info('Multipla seleção desabilitada');
+      return;
+    }
     this.selecionarDados(this.dados, true);
     this.atualizarServicoSelecionados();
   }
@@ -237,6 +266,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     if (ids === undefined) { return; }
     if (desmarcarDemais) { this.limparSelecao(true); }
     if (!this.ok(this.dados) || !this.ok(ids) || ids.length <= 0) { return; }
+    if (!this.multiplaSelecao) { ids = [ids[0]]; }
     this.selIds(this.dados, ids, selecionarFilhos);
 
     this.atualizarServicoSelecionados();
@@ -337,6 +367,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     return item.id;
   }
 
+  // TODO: rever isso (!)
   public getCssClass(): string {
     return "tree_two_little" + (this.modal_style ? ' tree_two_little_modal' : '');
   }
