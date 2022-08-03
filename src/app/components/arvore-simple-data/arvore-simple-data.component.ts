@@ -324,6 +324,22 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     this.selecionarFromService();
   }
 
+  //#region close all nodes
+  public closeExpandAllNodes(expandir: boolean = false): void {
+    if (!this.ok(this.dados) || this.dados === undefined) { return; }
+    this.closeExpandAllNodesAux(this.dados, expandir);
+  }
+  private closeExpandAllNodesAux(data: DataTree[] | undefined, expandir: boolean = false): void {
+    if (!this.ok(data) || data === undefined) { return; }
+    data.forEach(d => {
+      d.aberto = expandir;
+      if (!d.temFilhos || d.filhos === undefined) { return; }
+      this.closeExpandAllNodesAux(d.filhos, expandir);
+    });
+  }
+  //#endregion
+
+
   //#region ajustes Ja Clicado
   private ajustarLoadingJaClicado(data: DataTree[] | undefined): void {
     if (data === null || data === undefined || data.length <= 0) { return; }

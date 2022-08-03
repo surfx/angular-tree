@@ -1,5 +1,4 @@
-<img src="../../../assets/imagens_action/text.svg" alt="Load All Tree" style="width: 13px; margin-right: 10px;">
-<input type="text" (change)="pesquisarArvore($event)" (keyup)="onKeyupEvent($event)" /><br /><br />
+<input type="text" (change)="pesquisarArvore($event)" (keyup)="onKeyupEvent($event)" class="input_filter_tree" /><br /><br />
 
 
 <!-- [dados]="data$ | async" -->
@@ -66,6 +65,15 @@
         <a href="javascript:void(0);" (click)="loadAllTree()">
             <img src="../../../assets/imagens_action/load_all.svg" alt="Load All Tree" style="width: 13px;">
             Load All Tree
+        </a><br><br>
+
+        <a href="javascript:void(0);" (click)="collapseTree()">
+            <img src="../../../assets/imagens_action/collapse.svg" alt="Collapse" style="width: 13px; margin-top: 5pt;">
+            Collapse
+        </a>
+        <a href="javascript:void(0);" (click)="expandTree()">
+            <img src="../../../assets/imagens_action/expand.svg" alt="Collapse" style="width: 13px; margin-top: 5pt;">
+            Expand
         </a>
     </div>
 </section>

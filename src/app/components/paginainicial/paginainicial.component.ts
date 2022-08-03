@@ -17,6 +17,8 @@ export class PaginainicialComponent implements AfterViewInit {
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
 
+  private _dataInicial: DataTree[] | undefined; // memória
+
   constructor(
     private service: DadosArvoreService,
     private idsSelServ: IdsSelecionadosService
@@ -78,6 +80,13 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   public loadInitialData(): void {
+    if (this._dataInicial !== undefined) {
+      this.delay(30).then(any => {
+        this.treeSimple?.setData(this._dataInicial);
+        this.treeSimple?.closeExpandAllNodes(true);
+      });
+      return;
+    }
     let obs$ = this.service.getInitialData();
     if (obs$ === undefined) { return; }
     obs$.subscribe(data => {
@@ -86,30 +95,34 @@ export class PaginainicialComponent implements AfterViewInit {
     });
   }
 
+  // public loadInitialData(): void {
+  //   let obs$ = this.service.getInitialData();
+  //   if (obs$ === undefined) { return; }
+  //   obs$.subscribe(data => {
+  //     if (data === undefined) { return; }
+  //     this.treeSimple?.setData(data, true);
+  //   });
+  // }
+
+  //#region Filtrar Árvore
   public pesquisarArvore(event: any): void {
-    let valor = event.target.value;
-    if (valor === null || valor === undefined) {
-      this.loadAll();
-      return;
-    }
-    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
-    if (temp === undefined) { return; }
-    let idsS = this.treeSimple?.getIdSelecionados();
-    temp.subscribe(dados => {
-      if (dados === undefined) { return; }
-      this.treeSimple?.setData(dados, true);
-      this.treeSimple?.selecionarIds(idsS);
-    });
+    this.filtrarArvore(event);
   }
 
   public onKeyupEvent(event: any): void {
+    this.filtrarArvore(event);
+  }
+
+  private filtrarArvore(event: any): void {
     if (event === undefined) {
-      this.loadInitialData();
+      //this.loadInitialData();
+      this.treeSimple?.closeExpandAllNodes();
       return;
     }
     let valor = event.target.value;
     if (valor === undefined || valor.length <= 0) {
-      this.loadInitialData();
+      //this.loadInitialData();
+      this.treeSimple?.closeExpandAllNodes();
       return;
     }
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
@@ -121,10 +134,19 @@ export class PaginainicialComponent implements AfterViewInit {
       this.treeSimple?.selecionarIds(idsS);
     });
   }
+  //#endregion
 
   public loadAllTree(): void {
     this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
     this.treeSimple?.loadAll();
+  }
+
+  public collapseTree(): void {
+    this.treeSimple?.closeExpandAllNodes();
+  }
+
+  public expandTree(): void {
+    this.treeSimple?.closeExpandAllNodes(true);
   }
 
   //----
@@ -137,5 +159,8 @@ export class PaginainicialComponent implements AfterViewInit {
     if (this.idsSelServ === undefined) { return undefined; }
     return this.idsSelServ.getItemsSelecionados()?.map(item => item.toString());
   }
+
+  //this.delay(300).then(any => {});
+  async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
 
 }

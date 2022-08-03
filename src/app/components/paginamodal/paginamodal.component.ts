@@ -20,6 +20,8 @@ export class PaginamodalComponent implements AfterViewInit {
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
 
+  private _dataInicial: DataTree[] | undefined; // memória
+
   constructor(
     private service: DadosArvoreService,
     private idsSelServ: IdsSelecionadosService
@@ -31,10 +33,10 @@ export class PaginamodalComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.loadInitialData();
 
-    if (this.treeSimple !== undefined){
-      // não usar com o random -> controle de ids repetidos
-      this.treeSimple.loadAll();
-    }
+    // if (this.treeSimple !== undefined){
+    //   // não usar com o random -> controle de ids repetidos
+    //   this.treeSimple.loadAll();
+    // }
   }
 
   toggle() {
@@ -43,8 +45,16 @@ export class PaginamodalComponent implements AfterViewInit {
   }
 
   private loadInitialData(): void {
+    if (this._dataInicial !== undefined) {
+      this.delay(30).then(any => {
+        this.treeSimple?.setData(this._dataInicial);
+        this.treeSimple?.closeExpandAllNodes(true);
+      });
+      return;
+    }
     this.data$?.subscribe(data => {
       if (data === undefined) { return; }
+      this._dataInicial = data;
       this.treeSimple?.setData(data);
     });
   }
@@ -58,5 +68,59 @@ export class PaginamodalComponent implements AfterViewInit {
     if (this.idsSelServ === undefined) { return undefined; }
     return this.idsSelServ.getItemsSelecionados()?.map(item => item.toString());
   }
+
+  //#region Filtrar Árvore
+  public pesquisarArvore(event: any): void {
+    this.filtrarArvore(event);
+  }
+
+  public onKeyupEvent(event: any): void {
+    this.filtrarArvore(event);
+  }
+
+  private filtrarArvore(event: any): void {
+    if (event === undefined) {
+      this.loadInitialData();
+      this.treeSimple?.closeExpandAllNodes();
+      return;
+    }
+    let valor = event.target.value;
+    if (valor === undefined || valor.length <= 2) {
+      this.loadInitialData();
+      this.treeSimple?.closeExpandAllNodes();
+      return;
+    }
+    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
+    if (temp === undefined) { return; }
+    let idsS = this.treeSimple?.getIdSelecionados();
+    temp.subscribe(dados => {
+      if (dados === undefined) { return; }
+      this.treeSimple?.setData(dados, true);
+      this.treeSimple?.selecionarIds(idsS);
+    });
+  }
+  //#endregion
+
+  public limparSelecao(): void {
+    this.treeSimple?.limparSelecao(true);
+  }
+
+  public selecionarTodos(): void {
+    this.treeSimple?.selecionarTodos();
+  }
+
+  public loadAllTree(): void {
+    this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
+    this.treeSimple?.loadAll();
+  }
+
+  public estadoColapse: boolean = false;
+  public collapseExpandTree(): void {
+    this.treeSimple?.closeExpandAllNodes(this.estadoColapse);
+    this.estadoColapse = !this.estadoColapse;
+  }
+
+  //this.delay(300).then(any => {});
+  async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
 
 }

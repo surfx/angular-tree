@@ -79,8 +79,8 @@ export class DadosArvoreService {
           { id: '1.5', text: '102 Dpt' },
           { id: '1.6', text: 'Teste Acrea' },
           { id: '1.7', text: 'Delegacia Virtual do Acre' },
-          { id: '1.7', text: '109 Dp Teste' },
-          { id: '1.7', text: '1º Distrito Policial - Teste Intbo' }
+          { id: '1.8', text: '109 Dp Teste' },
+          { id: '1.9', text: '1º Distrito Policial - Teste Intbo' }
         ]
       },
       {

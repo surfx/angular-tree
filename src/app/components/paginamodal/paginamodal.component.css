@@ -32,6 +32,18 @@
 }
 /* #END MODAL */
 
+.input_filter_tree {
+    background: url(../../../assets/imagens_action/search.svg) no-repeat scroll 8px 8px;
+    background-size: 10px 10px;
+    padding: 4pt;
+    padding-left: 30px;
+    box-sizing: border-box;
+    border: 1pt solid black;
+    border-radius: 4px;
+    outline: none;
+    width: 300px;
+}
+
 .div_tree_simpledata {
     width: 500px;
     height: 400px;
@@ -42,4 +54,13 @@
     padding-bottom: 1em;
     margin-left: -40px;
     margin-bottom: 2em;
+}
+
+.ul_itens_tree {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.ul_itens_tree li {
+    padding-right: 5pt;
 }
