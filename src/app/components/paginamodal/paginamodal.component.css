@@ -11,12 +11,13 @@
     transform: translate(-50%, -50%);
     z-index: 11;
 
-    max-width: 500px;
+    max-width: 520px;
     min-height: 100px;
     max-height: 100px;
     min-width: 320px;
     max-height: 90vmax;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    overflow: hidden;
 }
 
 .overlay {
@@ -31,6 +32,14 @@
 }
 /* #END MODAL */
 
-.modal_tree_component {
-    margin: 1em 0 1em 0;
+.div_tree_simpledata {
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+    scroll-behavior: auto;
+
+    padding-right: 3em;
+    padding-bottom: 1em;
+    margin-left: -10px;
+    margin-bottom: 2em;
 }

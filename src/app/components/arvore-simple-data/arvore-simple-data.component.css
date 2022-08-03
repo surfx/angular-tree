@@ -49,6 +49,8 @@
 .tree_item_text_a {
     color: black;
     text-decoration: none;
+    /* white-space: nowrap;
+    overflow: hidden; */
 }
 
 /* deixa a árvore colada na borda esquerda */

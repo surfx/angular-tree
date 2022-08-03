@@ -3,12 +3,18 @@
 
 
 <!-- [dados]="data$ | async" -->
-<app-arvore-simple-data
-    [ExibirCheckBox]="true"
-    [ControlarSelecionados]="true"
-    [multiplaSelecao]="false"
-    #tree_simple
-></app-arvore-simple-data>
+
+<div class="div_tree_simpledata">
+    <app-arvore-simple-data
+        id="tree_simple"
+        [ExibirCheckBox]="true"
+        [ControlarSelecionados]="true"
+        [multiplaSelecao]="true"
+        #tree_simple
+    ></app-arvore-simple-data>
+</div>
+
+
 
 <br /><br />
 

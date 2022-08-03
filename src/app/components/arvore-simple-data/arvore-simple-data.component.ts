@@ -111,6 +111,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     this.loadAndSetFilhos(item);
 
     //item.selecionado = true;
+    let jaClicadoMem = item.jaClicado;
     item.jaClicado = true;
     //item.aberto = !item.aberto;
 
@@ -122,7 +123,11 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
       this.clearAllSel.emit();
       this.limparSelecao(true);
     }
+
+    // não vou fazer esse controle, pode ficar confuso para o usuário
+    //if (jaClicadoMem) { item.selecionado = !isSel; }
     item.selecionado = !isSel;
+
 
     if (this.ControlarSelecionados) {
       // manter estado dos selecionados

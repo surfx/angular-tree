@@ -22,7 +22,7 @@ export class PaginainicialComponent implements AfterViewInit {
     private idsSelServ: IdsSelecionadosService
   ) {
     this.data$ = this.service.getInitialData();
-    this.alldata = this.service.getData();
+    this.service.getData()?.subscribe(dados => this.alldata = dados);
   }
 
   ngAfterViewInit(): void {
@@ -72,7 +72,7 @@ export class PaginainicialComponent implements AfterViewInit {
 
   public loadAll(): void {
     if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
-      this.alldata = this.service.getData();
+      this.service.getData()?.subscribe(dados => this.alldata = dados);
     }
     this.treeSimple?.setData(this.alldata, true);
   }

@@ -12,3 +12,16 @@ a {
     justify-content: space-between;
     margin-left: 30px;
 }
+
+/* ------------------------------------------------ */
+
+.div_tree_simpledata {
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+    scroll-behavior: auto;
+
+    padding-right: 3em;
+    padding-bottom: 1em;
+    margin-left: -30px;
+}

@@ -8,7 +8,7 @@
 
 <ng-container *ngIf="mostrar">
     <div class="modal">
-        <div class="modal_tree_component">
+        <div class="div_tree_simpledata">
             <app-arvore-simple-data 
                 [ExibirCheckBox]="true" 
                 [ControlarSelecionados]="true" 
@@ -17,7 +17,6 @@
                 #tree_simple
             ></app-arvore-simple-data>
         </div>
-        
 
         <button (click)="toggle();">Fechar</button>
     </div>

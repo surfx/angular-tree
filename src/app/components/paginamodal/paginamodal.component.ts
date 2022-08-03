@@ -25,11 +25,16 @@ export class PaginamodalComponent implements AfterViewInit {
     private idsSelServ: IdsSelecionadosService
   ) {
     this.data$ = this.service.getInitialData();
-    this.alldata = this.service.getData();
+    this.service.getData()?.subscribe(dados => this.alldata = dados);
   }
 
   ngAfterViewInit(): void {
     this.loadInitialData();
+
+    if (this.treeSimple !== undefined){
+      // não usar com o random -> controle de ids repetidos
+      this.treeSimple.loadAll();
+    }
   }
 
   toggle() {
