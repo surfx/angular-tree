@@ -63,6 +63,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   }
 
   private limparSelecionadosEntrada(item: DataTree | undefined): void {
+    // limpa qualquer pré-delecção de dados de entrada. A seleção é mantida por "selecionarFromService()"
     if (item === undefined) { return; }
     item.selecionado = false;
     if (item.temFilhos() && item.filhos !== undefined) {
@@ -72,10 +73,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   //#region imagens
   public getImg(item: DataTree): string {
-    let imgClosed = "../../../assets/imagens/seta_dir_two.svg";
-    let imgOpened = "../../../assets/imagens/seta_baixo_two.svg";
-    let imgEmpty = "../../../assets/imagens/seta_empty_two.svg";
-    let imgDotted = "../../../assets/imagens/seta_dir_dotted.svg";
+    let imgClosed = "../../../assets/tree_imagens/seta_dir_two.svg";
+    let imgOpened = "../../../assets/tree_imagens/seta_baixo_two.svg";
+    let imgEmpty = "../../../assets/tree_imagens/seta_empty_two.svg";
+    let imgDotted = "../../../assets/tree_imagens/seta_dir_dotted.svg";
     if (item === null || item === undefined) { return imgEmpty; }
     if (!item.jaClicado) { // pode ser que tenha filhos
       return imgDotted;
@@ -97,7 +98,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   public clickImg = (item: DataTree) => {
     item.aberto = !item.aberto;
-    //item.selecionarFilhos();
   }
   //#endregion
 
@@ -117,7 +117,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     //item.selecionarFilhos();
     if (!controlCheck) { return; }
 
-    let isSel = item.selecionado;
+    let isSelMem = item.selecionado;
     if (!this.multiplaSelecao) {
       this.clearAllSel.emit();
       this.limparSelecao(true);
@@ -125,8 +125,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
     // não vou fazer esse controle, pode ficar confuso para o usuário
     //if (jaClicadoMem) { item.selecionado = !isSel; }
-    item.selecionado = !isSel;
-
+    item.selecionado = !isSelMem;
 
     if (this.ControlarSelecionados) {
       // manter estado dos selecionados
@@ -172,14 +171,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
       this.idsSelServ.auxIdsSelecionados(item);
     }
   }
-
-  // private loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
-  //   if (id === null || id === undefined) { return; }
-  //   return this.service.loadFilhos(id);
-  // }
-
-  //this.delay(300).then(any => {});
-  async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
 
   //#region get selecionados
   public getMapSelecionados(): Map<string, DataTree> | undefined {
@@ -297,10 +288,12 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   }
 
   public loadAll(): void {
+    // ideia: clicar em cada nó, add filhos, e para cada filho add repetir o processo
+    // porém existe algo que torna os filhos undefined, por isso o delay de 400...
     // if (this.dados===undefined||this.dados[0]===undefined){return;}
     // this.loadAndSetFilhos(this.dados[0]);
     // console.log(this.dados[0].filhos);
-
+    
     this.delay(400).then(any => {
       this.dados?.forEach(d => this.loadAllAux(d));
       if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
@@ -340,7 +333,6 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     });
   }
   //#endregion
-
 
   //#region ajustes Ja Clicado
   private ajustarLoadingJaClicado(data: DataTree[] | undefined): void {
@@ -390,5 +382,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   public trackItem(index: number, item: DataTree) {
     return item.id;
   }
+
+  //this.delay(300).then(any => {});
+  async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
 
 }

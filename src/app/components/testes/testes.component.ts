@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DataTree } from 'src/app/entidades/data-tree';
-import { Util } from 'src/app/util/util';
+import { ArvoreUtil } from 'src/app/util/arvore-util';
 
 @Component({
   selector: 'app-testes',
@@ -9,13 +9,22 @@ import { Util } from 'src/app/util/util';
 })
 export class TestesComponent implements OnInit {
 
-  possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+  private _arvoreUtil: ArvoreUtil = new ArvoreUtil();
+
+  private _dados: DataTree[] | undefined = undefined;
+  @Input('dados')
+  set dados(data: DataTree[] | undefined) { this._dados = Object.assign([], data); }
+  get dados(): DataTree[] | undefined { return this._dados; }
 
   constructor() {
-    this.possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+
   }
 
   ngOnInit(): void {
+    this._dados = [
+      new DataTree('1', 'item 1'),
+      new DataTree('2', 'item 2')
+    ];
   }
 
   // {
@@ -27,83 +36,35 @@ export class TestesComponent implements OnInit {
   // },
 
 
-  public randomTest() {
-    let text = Util.getRandomText(30, this.possible);
-    console.log(text);
-  }
-
   public testeArvoreRandomica(): void {
-    let arvore = this.gerarArvoreRandomica(0);
+    let arvore = this._arvoreUtil.getArvoreRandomica();
     console.table(arvore);
   }
 
   public testeArvoreJsonRandomica(): void {
-    let arvore = this.gerarArvoreJsonRandomica(0);
+    let arvore = this._arvoreUtil.getArvoreJsonRandomica();
     console.log(arvore);
-    let c = this.convert(arvore);
+    let c = ArvoreUtil.convertJsonToDataTree(arvore);
     console.log(c);
   }
 
-  //----------------------------------
+  public testeAddFilho(): void {
 
-  public gerarArvoreRandomica(passo: number = 0, maxStack = 4): DataTree[] {
-    if (passo >= maxStack) { return []; }
-    let rt: DataTree[] = [];
-
-    let numNodos = Util.getRandomInt(3, 15);
-    for (let i = 0; i < numNodos; i++) {
-      let dtTree = new DataTree(Util.getRandomInt(1, 1500) + '', Util.getRandomText(30, this.possible));
-      if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
-      let filhosAux = this.gerarArvoreRandomica(passo + 1, maxStack);
-      if (filhosAux.length > 0) {
-        filhosAux.forEach(fadd => dtTree.addFilho(fadd, false));
-      }
-      rt.push(dtTree);
-    }
-    return rt;
-  }
-
-  public gerarArvoreJsonRandomica(passo: number = 0, maxStack = 4): any[] | undefined {
-    if (passo >= maxStack) { return undefined; }
-    let rt: any[] | undefined = [];
-
-    let numNodos = Util.getRandomInt(3, 15);
-    for (let i = 0; i < numNodos; i++) {
-      let dtTree: any = { id: Util.getRandomInt(1, 1500) + '', text: Util.getRandomText(30, this.possible), chields: undefined };
-      if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
-      let filhosAux = this.gerarArvoreJsonRandomica(passo + 1, maxStack);
-      if (filhosAux !== undefined && filhosAux.length > 0) {
-        dtTree.chields = filhosAux;
-      }
-      rt.push(dtTree);
+    if (this._dados !== undefined && this._dados[0] !== undefined) {
+      this._dados[0].addFilho(new DataTree('f1', 'Filho 1'), false);
     }
 
-    return rt;
-  }
 
-  private convert(json: any[] | undefined): DataTree[] | undefined {
-    if (json === undefined) { return undefined; }
-    let ok = (obj: any) => obj !== undefined && obj !== null;
-    if (!ok(json) || json.length <= 0) { return undefined; }
-    let rt: DataTree[] = [];
-
-    for (let i = 0; i < json.length; i++) {
-      let j = json[i];
-      if (!ok(j) || !ok(j.id) || !ok(j.text)) { continue; }
-      let d: DataTree = new DataTree(j.id + '', j.text);
-      if (ok(j.chields)) {
-        let aux = this.convert(j.chields);
-        if (ok(aux) && aux !== undefined && aux?.length > 0) {
-          for (let y = 0; y < aux.length; y++) {
-            d.addFilho(aux[y], false);
-          }
-        }
+    this.delay(300).then(any => {
+      if (this._dados !== undefined && this._dados[0] !== undefined) {
+        console.log(this._dados[0].filhos?.toString());
       }
-      rt.push(d);
-    };
-
-    return rt;
+    });
   }
 
+
+
+  //this.delay(300).then(any => {});
+  async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
 
 }

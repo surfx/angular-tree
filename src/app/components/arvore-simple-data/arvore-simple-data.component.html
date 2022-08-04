@@ -6,7 +6,7 @@
                 <input type="checkbox" [checked]="item.selecionado" (change)="checkValue(item)" *ngIf="ExibirCheckBox">
             </label>
             <a href="javascript:void(0)" (click)="clickLabel(item,  true)" class="tree_item_text_a">{{item.texto}}</a>
-            <img src="../../../assets/imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
+            <img src="../../../assets/tree_imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
         </li>
         <ng-template [ngIf]="item.temFilhos() && item.aberto">
             <app-arvore-simple-data 

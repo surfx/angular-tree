@@ -64,4 +64,28 @@ export class ArvoreUtil {
         return rt;
     }
 
+    public static convertJsonToDataTree(json: any[] | undefined): DataTree[] | undefined {
+        if (json === undefined) { return undefined; }
+        let ok = (obj: any) => obj !== undefined && obj !== null;
+        if (!ok(json) || json.length <= 0) { return undefined; }
+        let rt: DataTree[] = [];
+    
+        for (let i = 0; i < json.length; i++) {
+          let j = json[i];
+          if (!ok(j) || !ok(j.id) || !ok(j.text)) { continue; }
+          let d: DataTree = new DataTree(j.id + '', j.text);
+          if (ok(j.chields)) {
+            let aux = this.convertJsonToDataTree(j.chields);
+            if (ok(aux) && aux !== undefined && aux?.length > 0) {
+              for (let y = 0; y < aux.length; y++) {
+                d.addFilho(aux[y], false);
+              }
+            }
+          }
+          rt.push(d);
+        };
+    
+        return rt;
+      }
+
 }

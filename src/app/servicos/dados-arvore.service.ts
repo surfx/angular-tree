@@ -193,14 +193,14 @@ export class DadosArvoreService {
     let rt$ = of(this.jsonData);
     return (
       this._delayService <= 0 ? rt$ : rt$.pipe(delay(this._delayService))
-    ).pipe(map(json => this.convert(json)));
+    ).pipe(map(json => ArvoreUtil.convertJsonToDataTree(json)));
   }
   //#endregion
 
   // nós iniciais da árvore, sem filhos
   public getInitialData(): Observable<DataTree[] | undefined> | undefined {
     // TODO: corrigir para usar o Observable
-    let dadosAux: DataTree[] | undefined = this.convert(this.jsonData); //this.getData();
+    let dadosAux: DataTree[] | undefined = ArvoreUtil.convertJsonToDataTree(this.jsonData); //this.getData();
     if (dadosAux === undefined) { return undefined; }
 
     let rt: DataTree[] = [];
@@ -214,7 +214,7 @@ export class DadosArvoreService {
   // para o exemplo não vou retornar os subfilhos
   public loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
     // TODO: corrigir para usar o Observable
-    let dadosAux: DataTree[] | undefined = this.convert(this.jsonData); // base de dados
+    let dadosAux: DataTree[] | undefined = ArvoreUtil.convertJsonToDataTree(this.jsonData); // base de dados
     if (id === null || id === undefined || dadosAux === undefined) { return undefined; }
     let rt = this.loadFilhosAux(id, dadosAux);
     return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
@@ -253,34 +253,12 @@ export class DadosArvoreService {
     return rt;
   }
 
-  private convert(json: any[] | undefined): DataTree[] | undefined {
-    if (json === undefined) { return undefined; }
-    let ok = (obj: any) => obj !== undefined && obj !== null;
-    if (!ok(json) || json.length <= 0) { return undefined; }
-    let rt: DataTree[] = [];
 
-    for (let i = 0; i < json.length; i++) {
-      let j = json[i];
-      if (!ok(j) || !ok(j.id) || !ok(j.text)) { continue; }
-      let d: DataTree = new DataTree(j.id + '', j.text);
-      if (ok(j.chields)) {
-        let aux = this.convert(j.chields);
-        if (ok(aux) && aux !== undefined && aux?.length > 0) {
-          for (let y = 0; y < aux.length; y++) {
-            d.addFilho(aux[y], false);
-          }
-        }
-      }
-      rt.push(d);
-    };
-
-    return rt;
-  }
 
   // --------------- filtrarData ---------------
   public filtrarData(filtro: string): Observable<DataTree[] | undefined> | undefined {
     // TODO: corrigir para usar o Observable
-    let rt = this.filtrarDataAux(this.convert(this.jsonData), filtro);
+    let rt = this.filtrarDataAux(ArvoreUtil.convertJsonToDataTree(this.jsonData), filtro);
     return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
   }
 
