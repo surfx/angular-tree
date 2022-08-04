@@ -80,13 +80,13 @@ export class PaginamodalComponent implements AfterViewInit {
 
   private filtrarArvore(event: any): void {
     if (event === undefined) {
-      this.loadInitialData();
+      //this.loadInitialData();
       this.treeSimple?.closeExpandAllNodes();
       return;
     }
     let valor = event.target.value;
-    if (valor === undefined || valor.length <= 2) {
-      this.loadInitialData();
+    if (valor === undefined || valor.length <= 0) {
+      //this.loadInitialData();
       this.treeSimple?.closeExpandAllNodes();
       return;
     }

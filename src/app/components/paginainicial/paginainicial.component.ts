@@ -92,11 +92,12 @@ export class PaginainicialComponent implements AfterViewInit {
     obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
+      this._dataInicial = data;
     });
   }
 
   // public loadInitialData(): void {
-  //   let obs$ = this.service.getInitialData();
+  //   let obs$ = this.service.getInidadostialData();
   //   if (obs$ === undefined) { return; }
   //   obs$.subscribe(data => {
   //     if (data === undefined) { return; }

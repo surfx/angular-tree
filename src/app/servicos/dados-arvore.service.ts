@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { delay, map, Observable, of } from 'rxjs';
 import { DataTree } from '../entidades/data-tree';
-import { Util } from '../util/util';
+import { ArvoreUtil } from '../util/arvore-util';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,8 @@ export class DadosArvoreService {
 
   constructor() {
     //this.jsonData = this.getJsonDataTeste1();
-    this.jsonData = this.getJsonDataTeste2();
-    //this.jsonData = this.gerarArvoreJsonRandomica();
+    //this.jsonData = this.getJsonDataTeste2();
+    this.jsonData = this.gerarArvoreJsonRandomica();
   }
 
   //#endregion data base simulada
@@ -183,40 +183,9 @@ export class DadosArvoreService {
     ];
   }
 
-  private possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
-  public gerarArvoreRandomica(passo: number = 0, maxStack = 4): DataTree[] {
-    if (passo >= maxStack) { return []; }
-    let rt: DataTree[] = [];
-
-    let numNodos = Util.getRandomInt(3, 15);
-    for (let i = 0; i < numNodos; i++) {
-      let dtTree = new DataTree(Util.getRandomInt(1, 1500) + '', Util.getRandomText(30, this.possible));
-      if (!Util.getRandomBoolean()) { continue; }
-      let filhosAux = this.gerarArvoreRandomica(passo + 1, maxStack);
-      if (filhosAux.length > 0) {
-        filhosAux.forEach(fadd => dtTree.addFilho(fadd, false));
-      }
-      rt.push(dtTree);
-    }
-    return rt;
-  }
-
-  public gerarArvoreJsonRandomica(passo: number = 0, maxStack = 4): any[] | undefined {
-    if (passo >= maxStack) { return undefined; }
-    let rt: any[] | undefined = [];
-
-    let numNodos = Util.getRandomInt(3, 15);
-    for (let i = 0; i < numNodos; i++) {
-      let dtTree: any = { id: Util.getRandomInt(1, 1500) + '', text: Util.getRandomText(30, this.possible), chields: undefined };
-      if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
-      let filhosAux = this.gerarArvoreJsonRandomica(passo + 1, maxStack);
-      if (filhosAux !== undefined && filhosAux.length > 0) {
-        dtTree.chields = filhosAux;
-      }
-      rt.push(dtTree);
-    }
-
-    return rt;
+  private _arvoreUtil: ArvoreUtil = new ArvoreUtil();
+  private gerarArvoreJsonRandomica() {
+    return this._arvoreUtil.getArvoreJsonRandomica();
   }
 
   public getData(): Observable<DataTree[] | undefined> | undefined {

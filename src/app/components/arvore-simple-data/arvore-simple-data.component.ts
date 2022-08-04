@@ -22,6 +22,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
   @Input('dados')
   set dados(data: DataTree[] | undefined) {
     this._dados = Object.assign([], data);
+    this.updateHasData();
   }
   get dados(): DataTree[] | undefined { return this._dados; }
 
@@ -40,7 +41,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   ngAfterContentChecked(): void {
     // evitar o erro NG0100
-    this.hasData = this.dados !== null && this.dados !== undefined && this.dados.length > 0;
+    this.updateHasData();
   }
 
   ngOnDestroy(): void {
@@ -51,6 +52,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
 
   public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
     this.dados = Object.assign([], data);
+    this.updateHasData();
 
     if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
     if (ajustarLoading && this.dados !== undefined) {
@@ -108,7 +110,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     this.loadAndSetFilhos(item);
 
     //item.selecionado = true;
-    let jaClicadoMem = item.jaClicado;
+    //let jaClicadoMem = item.jaClicado;
     item.jaClicado = true;
     //item.aberto = !item.aberto;
 
@@ -378,6 +380,10 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     this.selecionarIds(this.idsSelServ.getIdsSelecionados());
   }
   //#endregion
+
+  private updateHasData(): void {
+    this.hasData = this.dados !== null && this.dados !== undefined && this.dados.length > 0;
+  }
 
   private ok = (el: any): boolean => el !== undefined && el !== null && el;
 
