@@ -7,6 +7,7 @@ import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvor
 import { PaginainicialComponent } from './components/paginainicial/paginainicial.component';
 import { PaginamodalComponent } from './components/paginamodal/paginamodal.component';
 import { TestesComponent } from './components/testes/testes.component';
+import { ComponenteTesteComponent } from './components/testes/componente-teste/componente-teste.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { TestesComponent } from './components/testes/testes.component';
     ArvoreSimpleDataComponent,
     PaginainicialComponent,
     PaginamodalComponent,
-    TestesComponent
+    TestesComponent,
+    ComponenteTesteComponent
   ],
   imports: [
     BrowserModule,

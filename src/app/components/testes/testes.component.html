@@ -1,6 +1,17 @@
 <a href="javascript:void(0);" (click)="testeArvoreRandomica()">testeArvoreRandomica()</a><br>
 <a href="javascript:void(0);" (click)="testeArvoreJsonRandomica()">testeArvoreJsonRandomica()</a><br>
 <a href="javascript:void(0);" (click)="testeAddFilho()">testeAddFilho()</a><br>
+<a href="javascript:void(0);" (click)="loadInitialData()">loadInitialData()</a><br>
+<a href="javascript:void(0);" (click)="testeAddFilho2()">testeAddFilho2()</a><br>
+<a href="javascript:void(0);" (click)="testeAddFilho3()">testeAddFilho3()</a><br>
 
 <br>
-{{dados | json}}
+
+<app-componente-teste #componente_teste></app-componente-teste>
+
+<br>
+
+<div class="div_tree_simpledata">
+    <app-arvore-simple-data id="tree_simple" [ExibirCheckBox]="true" [ControlarSelecionados]="true"
+        [multiplaSelecao]="true" #tree_simple></app-arvore-simple-data>
+</div>

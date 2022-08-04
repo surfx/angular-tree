@@ -69,7 +69,9 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   public limparData(): void {
+    this._dataInicial = undefined;
     this.treeSimple?.limparData();
+    this.limparSelecao();
   }
 
   public loadAll(): void {
@@ -80,7 +82,7 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   public loadInitialData(): void {
-    if (this._dataInicial !== undefined) {
+    if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
       this.delay(30).then(any => {
         this.treeSimple?.setData(this._dataInicial);
         this.treeSimple?.closeExpandAllNodes(true);
@@ -159,6 +161,39 @@ export class PaginainicialComponent implements AfterViewInit {
   public getSelecionadosServicoItemSelecionado(): string[] | undefined {
     if (this.idsSelServ === undefined) { return undefined; }
     return this.idsSelServ.getItemsSelecionados()?.map(item => item.toString());
+  }
+
+
+
+  public testeAddFilho2(): void {
+    this.loadInitialData();
+    this.delay(300).then(any => {
+      if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return; }
+      if (this.treeSimple.dados !== undefined) {
+        this.treeSimple.dados.forEach(d => {
+          this.loadChieldsAux(d);
+        });
+      }
+    });
+  }
+
+  private loadChieldsAux(item: DataTree | undefined): void {
+    if (item === undefined) { return; }
+    this.service.loadFilhos(item.id)?.subscribe(filhos => {
+      if (filhos === undefined) { return; }
+      item.filhos = [];
+      filhos.forEach(f => {
+        if (f === undefined) { return; }
+        item.addFilho(f, false);
+
+        this.loadChieldsAux(f);
+      });
+      // if (d.temFilhos() && d.filhos !== undefined) {
+      //   d.filhos.forEach(f => {
+      //     this.loadChieldsAux(d.filhos);
+      //   });
+      // }
+    });
   }
 
   //this.delay(300).then(any => {});

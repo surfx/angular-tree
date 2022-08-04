@@ -15,8 +15,8 @@ export class DadosArvoreService {
 
   constructor() {
     //this.jsonData = this.getJsonDataTeste1();
-    //this.jsonData = this.getJsonDataTeste2();
-    this.jsonData = this.gerarArvoreJsonRandomica();
+    this.jsonData = this.getJsonDataTeste2();
+    //this.jsonData = this.gerarArvoreJsonRandomica();
   }
 
   //#endregion data base simulada

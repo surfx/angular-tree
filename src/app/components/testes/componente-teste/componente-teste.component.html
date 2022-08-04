@@ -1,0 +1,10 @@
+<ng-template [ngIf]="hasData">
+    <div *ngFor="let item of dados">
+        {{item.texto}}
+        <ng-template [ngIf]="item.temFilhos()">
+            <div style="margin-left: 40px;">
+                <app-componente-teste [dados]="item.filhos"></app-componente-teste>
+            </div>
+        </ng-template>
+    </div>
+</ng-template>

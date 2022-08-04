@@ -31,7 +31,12 @@ export class DataTree {
         if (this.filhos === null || this.filhos == undefined) { this.filhos = []; }
         //filho.pai = this;
         if (selecaoPai) { filho.selecionado = this.selecionado; }
-        this.filhos.push(filho);
+
+        // por algum motivo o push diretamente em 'this.filhos' não renderiza novamente o componente
+        let filhosAux = Object.assign([], this.filhos);
+        filhosAux.push(filho);
+        this.filhos = filhosAux;
+
         this.filhoAdicionado.next(filho);
     }
 

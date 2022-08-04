@@ -293,7 +293,7 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     // if (this.dados===undefined||this.dados[0]===undefined){return;}
     // this.loadAndSetFilhos(this.dados[0]);
     // console.log(this.dados[0].filhos);
-    
+
     this.delay(400).then(any => {
       this.dados?.forEach(d => this.loadAllAux(d));
       if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
@@ -301,23 +301,24 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     });
   }
 
-  private loadAllAux(data: DataTree | undefined): void {
-    if (!this.ok(data) || data === undefined) { return; }
-    this.clickLabel(data);
+  private loadAllAux(item: DataTree | undefined): void {
+    if (!this.ok(item) || item === undefined) { return; }
+    this.clickLabel(item);
 
-    if (data.temFilhos()) {
-      data.filhos?.forEach(f => {
+    if (item.temFilhos()) {
+      item.filhos?.forEach(f => {
         this.loadAllAux(f);
       });
     }
     let subs: Subscription =
-      data.filhoAdicionado.subscribe(fadd => {
+      item.filhoAdicionado.subscribe(fadd => {
         this.loadAllAux(fadd);
       });
     this._subscriptions.push(subs);
 
     this.selecionarFromService();
   }
+
 
   //#region close all nodes
   public closeExpandAllNodes(expandir: boolean = false): void {
