@@ -84,15 +84,12 @@ export class ComponenteTesteComponent implements OnInit, AfterContentChecked {
 
   public clickLabel(item: DataTree | undefined, selFilhos: boolean = false): void {
     if (item === undefined) { return; }
-    console.log('-- clickLabel', item);
     item.aberto = true;
     this.loadAndSetFilhos(item);
 
     let isSelMem = item.selecionado;
     if (!this.MultiplaSelecao) { this.limparSelecao(); }
     item.selecionado = !isSelMem;
-
-    console.log('----- ', item.selecionado, item);
 
     if (this.MultiplaSelecao && selFilhos) {
       console.log('item.selecionarFilhos()');
@@ -274,7 +271,6 @@ export class ComponenteTesteComponent implements OnInit, AfterContentChecked {
   public loadAll(): void {
     if (this.dados === undefined) { return; }
     this.dados.forEach(d => {
-      //this.loadChieldsAux2(d);
       this.loadChieldsAux(d);
     });
   }

@@ -33,11 +33,10 @@ export class TestesComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    // this.data$?.subscribe(data => {
-    //   if (data === undefined) { return; }
-    //   this.treeSimple?.setData(data);
-    // });
-    this.filtrarAux('Ama');
+    this.data$?.subscribe(data => {
+      if (data === undefined) { return; }
+      this.treeSimple?.setData(data);
+    });
   }
 
   public getMapSelecionados() {
@@ -114,16 +113,19 @@ export class TestesComponent implements AfterViewInit, OnInit {
   // }
 
   //#region Filtrar Árvore
-  public pesquisarArvore(event: any): void {
-    this.filtrarArvore(event);
-  }
-
-  public onKeyupEvent(event: any): void {
-    this.filtrarArvore(event);
-  }
-
   private houveFiltro: boolean = false;
-  private filtrarArvore(event: any): void {
+  private _idsSel: Set<string> = new Set<string>();
+  public onKeyupEvent(event: any): void {
+    let idsS = this.treeSimple?.getIdSelecionados(); // TODO: add em um serviço ?
+    if (idsS !== undefined) {
+      idsS.forEach(id => {
+        if (!this._idsSel.has(id)) {
+          this._idsSel.add(id);
+        }
+        // Como saber os deselecionados ?? - EventEmitter ?
+      });
+    }
+
     if (event === undefined) {
       if (this.houveFiltro) {
         this.loadInitialData();
@@ -133,10 +135,6 @@ export class TestesComponent implements AfterViewInit, OnInit {
       return;
     }
     let valor = event.target.value;
-    this.filtrarAux(valor);
-  }
-
-  private filtrarAux(valor:string){
     if (valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
         this.loadInitialData();
@@ -148,7 +146,8 @@ export class TestesComponent implements AfterViewInit, OnInit {
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
 
-    // //let idsS = this.treeSimple?.getIdSelecionados();
+
+    console.log(idsS);
     // temp.subscribe(dados => {
     //   if (dados === undefined) { return; }
     //   this.treeSimple?.limparData();
@@ -161,16 +160,15 @@ export class TestesComponent implements AfterViewInit, OnInit {
     // });
 
     temp.subscribe(dados => {
-      if (dados===undefined){return;}
+      if (dados === undefined) { return; }
       this.houveFiltro = true;
       this.delay(30).then(any => {
-        console.log('set data filter');
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
+        this.treeSimple?.selecionarIds(idsS);
       });
     });
   }
-
   //#endregion
 
   public loadAllTree(): void {
