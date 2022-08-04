@@ -1,0 +1,54 @@
+.arrow_right_one, .arrow_right_two, .arrow_right_two_little {
+    width: 10px;
+}
+.arrow_down_one {
+    width: 5px;
+    margin-right: 2px; 
+    margin-left: 3px;
+    padding-bottom: 3px;
+}
+
+.arrow_right_two {
+    padding-bottom: 1px;
+}
+.arrow_down_two, .arrow_down_two_little {
+    width: 10px;
+    padding-bottom: 2px;
+}
+
+.arrow_right_two_little, .arrow_down_two_little {
+    width: 8px;
+}
+
+.arrow_right_two_little_dotted {
+    width: 6px;
+    padding-right: 2px;
+    padding-bottom: 1px;
+}
+
+.tree_two_little {
+    font-family: 'Rawline','Raleway',sans-serif;
+    font-size: 1em;
+    margin: 0;
+    cursor: pointer;
+}
+.tree_two_little ul {
+    padding-inline-start: 30px;
+}
+.tree_two_little li {
+    font-size: 12px;
+    list-style: none;
+    padding-top: 0.08em;
+    padding-bottom: 0.08em;
+}
+.tree_two_little input[type="checkbox"]{
+    width: 0.8em;
+    height: 0.8em;
+}
+
+.tree_item_text_a {
+    color: black;
+    text-decoration: none;
+    /* white-space: nowrap;
+    overflow: hidden; */
+}

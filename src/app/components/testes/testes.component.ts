@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { ArvoreUtil } from 'src/app/util/arvore-util';
+import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
 import { ArvoreSimpleDataComponent } from '../arvore-simple-data/arvore-simple-data.component';
 import { ComponenteTesteComponent } from './componente-teste/componente-teste.component';
 
@@ -11,159 +11,187 @@ import { ComponenteTesteComponent } from './componente-teste/componente-teste.co
   templateUrl: './testes.component.html',
   styleUrls: ['./testes.component.css']
 })
-export class TestesComponent implements OnInit, AfterViewInit {
+export class TestesComponent implements AfterViewInit, OnInit {
 
-  @ViewChild('componente_teste') componente_teste: ComponenteTesteComponent | undefined;
-  @ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
 
-  private _arvoreUtil: ArvoreUtil = new ArvoreUtil();
-
-  private _dados: DataTree[] | undefined = undefined;
+  //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
+  @ViewChild('componente_teste') treeSimple: ComponenteTesteComponent | undefined;
 
   data$: Observable<DataTree[] | undefined> | undefined;
+  alldata: DataTree[] | undefined;
 
-  constructor(private service: DadosArvoreService) {
+  private _dataInicial: DataTree[] | undefined; // memória
+
+  constructor(
+    private service: DadosArvoreService
+  ) {
     this.data$ = this.service.getInitialData();
+    this.service.getData()?.subscribe(dados => this.alldata = dados);
   }
 
   ngOnInit(): void {
-    //this._dados = this._arvoreUtil.getArvoreRandomica();
-    //this._dados = ArvoreUtil.convertJsonToDataTree(this.getJsonDataTeste2());
-
-    //this.service.
   }
 
   ngAfterViewInit(): void {
-    this.data$?.subscribe(data => {
-      if (data === undefined) { return; }
-      this.treeSimple?.setData(data);
-      this.componente_teste?.setData(data);
-    });
-
-    // this.delay(30).then(any => {
-    //   if (this.componente_teste !== undefined) {
-    //     //this.componente_teste.dados = this._dados;
-    //     this.componente_teste.setData(this._dados);
-    //   }
+    // this.data$?.subscribe(data => {
+    //   if (data === undefined) { return; }
+    //   this.treeSimple?.setData(data);
     // });
+    this.filtrarAux('Ama');
   }
 
-  // {
-  //   id: '1', text: 'item 1', chields: [
-  //     { id: '1.1', text: 'item 1.1' },
-  //     { id: '1.2', text: 'item 1.2' },
-  //     { id: '1.3', text: 'item 1.3' }
-  //   ]
-  // },
-
-
-  public testeArvoreRandomica(): void {
-    let arvore = this._arvoreUtil.getArvoreRandomica();
-    console.table(arvore);
+  public getMapSelecionados() {
+    if (!this.treeSimple) { return; }
+    let sel = this.treeSimple.getMapSelecionados();
+    console.log('-----------------------');
+    sel?.forEach((v, k) => console.log(`${k}: ${v.texto}`));
+    console.log('-----------------------');
   }
 
-  public testeArvoreJsonRandomica(): void {
-    let arvore = this._arvoreUtil.getArvoreJsonRandomica();
-    console.log(arvore);
-    let c = ArvoreUtil.convertJsonToDataTree(arvore);
-    console.log(c);
+  public getIdSelecionados() {
+    if (!this.treeSimple) { return; }
+    let sel = this.treeSimple.getIdSelecionados();
+    console.log('-----------------------');
+    sel?.forEach(v => console.log(`${v}`));
+    console.log('-----------------------');
   }
 
-  public testeAddFilho(): void {
-    if (this.componente_teste === undefined) { return; }
-
-    let data = this.componente_teste.dados;
-
-    if (data === undefined) { return; }
-
-    // let filhosAux = Object.assign([], data[0].filhos);
-    // filhosAux?.push(new DataTree('f1', 'Filho 1'));
-    //data[0].filhos = filhosAux;
-
-    data[0].addFilho(new DataTree('f1', 'Filho 1'), false);
-
-    console.log(data[0].filhos?.toString());
-
-    this.delay(300).then(any => {
-      if (data !== undefined && data[0] !== undefined) {
-        console.log(data[0].filhos?.toString());
-      }
-    });
-
-    this.delay(400).then(any => {
-      if (this.componente_teste === undefined) { return; }
-      if (this.componente_teste.dados === undefined) { return; }
-      if (this.componente_teste.dados[0] === undefined) { return; }
-      console.log(this.componente_teste.dados[0].filhos);
-    });
+  // para o exemplo não vou retornar os subfilhos
+  public loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
+    return this.service.loadFilhos(id);
   }
 
-  public testeAddFilho2(): void {
-    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return; }
+  public limparSelecao(): void {
+    this.treeSimple?.limparSelecao();
+  }
 
-    if (this.treeSimple.dados !== undefined) {
-      this.treeSimple.dados.forEach(d => {
-        this.loadChieldsAux2(d);
-      });
+  public selecionarTodos(): void {
+    this.treeSimple?.selecionarTodos();
+  }
+
+  public selecionarIds(): void {
+    let ids: string[] = ['1', '1.2', '3.3', '3.1'];
+    this.treeSimple?.selecionarIds(ids, true, false);
+  }
+
+  public limparData(): void {
+    this._dataInicial = undefined;
+    this.treeSimple?.limparData();
+    this.limparSelecao();
+  }
+
+  public loadAll(): void {
+    if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
+      this.service.getData()?.subscribe(dados => this.alldata = dados);
     }
-
-    if (this.componente_teste !== undefined) {
-      this.componente_teste.dados?.forEach(d => {
-        this.loadChieldsAux2(d);
-      });
-    }
-  }
-
-  private loadChieldsAux2(item: DataTree | undefined): void {
-    if (item === undefined) { return; }
-    this.service.loadFilhos(item.id)?.subscribe(filhos => {
-      if (filhos === undefined) { return; }
-      item.filhos = [];
-      filhos.forEach(f => {
-        if (f === undefined) { return; }
-        item.addFilho(f, false);
-
-        this.loadChieldsAux2(f);
-      });
-      // if (d.temFilhos() && d.filhos !== undefined) {
-      //   d.filhos.forEach(f => {
-      //     this.loadChieldsAux(d.filhos);
-      //   });
-      // }
-    });
-  }
-
-  public testeAddFilho3(): void {
-    if (this.treeSimple === undefined) { return; }
-    this.treeSimple.loadAll();
-  }
-
-  private getJsonDataTeste2() {
-    return [
-      {
-        id: '1', text: 'GOVERNOS ESTADUAIS', chields: [
-          { id: '1.1', text: 'Governo do Estado de Acre - AC' },
-        ]
-      },
-      {
-        id: '2', text: 'Governo do Estado de Alagoas', chields: [
-          { id: '2.1', text: 'Secretaria de Segurança Pública da Defesa Social de Alagoas' },
-        ]
-      },
-      {
-        id: '3', text: 'Governo do Estado de Amazonas'
-      },
-    ];
+    this.treeSimple?.setData(this.alldata, true);
   }
 
   public loadInitialData(): void {
+    if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
+      this.delay(30).then(any => {
+        this.treeSimple?.setData(this._dataInicial);
+        this.treeSimple?.closeExpandAllNodes(true);
+      });
+      return;
+    }
     let obs$ = this.service.getInitialData();
     if (obs$ === undefined) { return; }
     obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
-      this.componente_teste?.setData(data);
+      this._dataInicial = data;
     });
+  }
+
+  // public loadInitialData(): void {
+  //   let obs$ = this.service.getInidadostialData();
+  //   if (obs$ === undefined) { return; }
+  //   obs$.subscribe(data => {
+  //     if (data === undefined) { return; }
+  //     this.treeSimple?.setData(data, true);
+  //   });
+  // }
+
+  //#region Filtrar Árvore
+  public pesquisarArvore(event: any): void {
+    this.filtrarArvore(event);
+  }
+
+  public onKeyupEvent(event: any): void {
+    this.filtrarArvore(event);
+  }
+
+  private houveFiltro: boolean = false;
+  private filtrarArvore(event: any): void {
+    if (event === undefined) {
+      if (this.houveFiltro) {
+        this.loadInitialData();
+        this.houveFiltro = false;
+      }
+      this.treeSimple?.closeExpandAllNodes();
+      return;
+    }
+    let valor = event.target.value;
+    this.filtrarAux(valor);
+  }
+
+  private filtrarAux(valor:string){
+    if (valor === undefined || valor.length <= 0) {
+      if (this.houveFiltro) {
+        this.loadInitialData();
+        this.houveFiltro = false;
+      }
+      this.treeSimple?.closeExpandAllNodes();
+      return;
+    }
+    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
+    if (temp === undefined) { return; }
+
+    // //let idsS = this.treeSimple?.getIdSelecionados();
+    // temp.subscribe(dados => {
+    //   if (dados === undefined) { return; }
+    //   this.treeSimple?.limparData();
+
+    //   this.houveFiltro = true;
+    //   this.treeSimple?.setData(dados, false);
+    //   this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
+    //   //this.treeSimple?.selecionarIds(idsS);
+
+    // });
+
+    temp.subscribe(dados => {
+      if (dados===undefined){return;}
+      this.houveFiltro = true;
+      this.delay(30).then(any => {
+        console.log('set data filter');
+        this.treeSimple?.setData(dados, false);
+        this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
+      });
+    });
+  }
+
+  //#endregion
+
+  public loadAllTree(): void {
+    this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
+    this.treeSimple?.loadAll();
+  }
+
+  public collapseTree(): void {
+    this.treeSimple?.closeExpandAllNodes();
+  }
+
+  public expandTree(): void {
+    this.treeSimple?.closeExpandAllNodes(true);
+  }
+
+  //----
+  public getSelecionados(): string[] | undefined {
+    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return undefined; }
+    let map: Map<string, DataTree> | undefined = this.treeSimple.getMapSelecionados();
+    if (map === undefined) { return undefined; }
+    return [...map.values()].map(item => item.toString());
   }
 
   //this.delay(300).then(any => {});

@@ -1,28 +1,19 @@
-<!-- <ng-template [ngIf]="hasData">
-    <div *ngFor="let item of dados">
-        {{item.texto}}
-        <ng-template [ngIf]="item.temFilhos()">
-            <div style="margin-left: 40px;">
-                <app-componente-teste [dados]="item.filhos"></app-componente-teste>
-            </div>
-        </ng-template>
-    </div>
-</ng-template> -->
-
 <ng-template [ngIf]="hasData">
-    <ul>
+    <ul class="tree_two_little">
         <ng-container *ngTemplateOutlet="Recursion; context:{ list: dados}"></ng-container>
     </ul>
 
     <ng-template #Recursion let-list="list">
         <li *ngFor="let item of list">
-            {{ item.texto }}
-            <ul *ngIf="item.temFilhos()">
+
+            <img [src]="getImg(item)" (click)="clickImg(item)" [class]="getImgClass(item)">
+            <input type="checkbox" [checked]="item.selecionado" (change)="clickLabel(item, true)" *ngIf="ExibirCheckBox">
+            <a href="javascript:void(0)" (click)="clickLabel(item, false)" class="tree_item_text_a">{{item.texto}}</a>
+            <img src="../../../../assets/tree_imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
+
+            <ul *ngIf="item.temFilhos() && item.aberto" class="tree_two_little">
                 <ng-container *ngTemplateOutlet="Recursion; context:{ list: item.filhos }"></ng-container>
             </ul>
         </li>
     </ng-template>
 </ng-template>
-
-
-<!-- https://stackoverflow.com/questions/63795040/a-recursive-function-in-angular-html-document -->

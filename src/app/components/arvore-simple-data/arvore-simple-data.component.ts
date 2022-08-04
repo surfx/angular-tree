@@ -353,8 +353,8 @@ export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterConten
     if (data === null || data === undefined || data.length <= 0) { return; }
     data.forEach(d => {
       d.jaClicado = jaClicado;
-      if (d.temFilhos() && this.ok(d.filhos)) {
-        this.ajustarLoadingJaClicado(d.filhos);
+      if (d.temFilhos() && d.filhos !== undefined) {
+        this.setAllJaClicadoAux(d.filhos, jaClicado);
       }
     });
   }
