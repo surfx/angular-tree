@@ -37,14 +37,15 @@ export class TestesComponent implements OnInit, AfterViewInit {
     this.data$?.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data);
+      this.componente_teste?.setData(data);
     });
 
-    this.delay(30).then(any => {
-      if (this.componente_teste !== undefined) {
-        //this.componente_teste.dados = this._dados;
-        this.componente_teste.setData(this._dados);
-      }
-    });
+    // this.delay(30).then(any => {
+    //   if (this.componente_teste !== undefined) {
+    //     //this.componente_teste.dados = this._dados;
+    //     this.componente_teste.setData(this._dados);
+    //   }
+    // });
   }
 
   // {
@@ -105,6 +106,12 @@ export class TestesComponent implements OnInit, AfterViewInit {
         this.loadChieldsAux2(d);
       });
     }
+
+    if (this.componente_teste !== undefined) {
+      this.componente_teste.dados?.forEach(d => {
+        this.loadChieldsAux2(d);
+      });
+    }
   }
 
   private loadChieldsAux2(item: DataTree | undefined): void {
@@ -155,6 +162,7 @@ export class TestesComponent implements OnInit, AfterViewInit {
     obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
+      this.componente_teste?.setData(data);
     });
   }
 

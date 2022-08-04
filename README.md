@@ -47,3 +47,4 @@ typescript                      4.7.4
 - [Projeto Git](https://github.com/surfx/angular-tree)
 - [Multiple ways to Create an Observable](https://www.cloudhadoop.com/angular-observable-delay-example/)
 - [Modal Angular](https://consolelog.com.br/modal-animations-angular/)
+- [Ideia Recursão Componente](https://stackoverflow.com/questions/63795040/a-recursive-function-in-angular-html-document)

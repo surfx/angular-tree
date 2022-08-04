@@ -1,4 +1,4 @@
-<ng-template [ngIf]="hasData">
+<!-- <ng-template [ngIf]="hasData">
     <div *ngFor="let item of dados">
         {{item.texto}}
         <ng-template [ngIf]="item.temFilhos()">
@@ -7,4 +7,22 @@
             </div>
         </ng-template>
     </div>
+</ng-template> -->
+
+<ng-template [ngIf]="hasData">
+    <ul>
+        <ng-container *ngTemplateOutlet="Recursion; context:{ list: dados}"></ng-container>
+    </ul>
+
+    <ng-template #Recursion let-list="list">
+        <li *ngFor="let item of list">
+            {{ item.texto }}
+            <ul *ngIf="item.temFilhos()">
+                <ng-container *ngTemplateOutlet="Recursion; context:{ list: item.filhos }"></ng-container>
+            </ul>
+        </li>
+    </ng-template>
 </ng-template>
+
+
+<!-- https://stackoverflow.com/questions/63795040/a-recursive-function-in-angular-html-document -->
