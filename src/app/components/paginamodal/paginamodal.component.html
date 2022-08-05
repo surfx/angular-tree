@@ -10,7 +10,7 @@
     <div class="modal">
         <ul class="ul_itens_tree">
             <li>
-                <input type="text" (change)="pesquisarArvore($event)" (keyup)="onKeyupEvent($event)" class="input_filter_tree" />
+                <input type="text" (keyup)="pesquisarArvore($event)" class="input_filter_tree" />
             </li>
             <li>
                 <a href="javascript:void(0);" (click)="limparSelecao()">

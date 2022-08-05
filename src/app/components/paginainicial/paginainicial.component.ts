@@ -82,6 +82,7 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   public loadInitialData(): void {
+    this.limparData();
     if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
       this.delay(30).then(any => {
         this.treeSimple?.setData(this._dataInicial);

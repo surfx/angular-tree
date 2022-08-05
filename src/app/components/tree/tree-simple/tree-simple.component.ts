@@ -24,6 +24,8 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
   public hasData: boolean = false;
 
+  private _mapSelecionados: Map<string, DataTree> = new Map<string, DataTree>();
+
   constructor(private service: DadosArvoreService) { }
 
   ngOnInit(): void {
@@ -35,13 +37,17 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   }
 
   public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
+    let idsSelecionados = this.getIdSelecionados();
     this.dados = Object.assign([], data);
     this.updateHasData();
 
     //if (this.dados !== undefined) { this.dados.forEach(d => this.limparSelecionadosEntrada(d)); }
+    this.limparSelecao(false);
     if (ajustarLoading && this.dados !== undefined) {
       this.ajustarLoadingJaClicado(this.dados);
     }
+
+    if (idsSelecionados !== undefined) { this.selecionarIds(idsSelecionados); }
   }
 
   private updateHasData(): void {
@@ -92,76 +98,38 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     item.selecionado = !isSelMem;
 
     if (this.MultiplaSelecao && selFilhos) {
-      console.log('item.selecionarFilhos()');
       item.selecionarFilhos();
     }
 
+    this.atualizarSelecionadosMem(item);
   }
 
   //#region get selecionados
+  // retorna todos os selecionados, independentemente do filtro aplicado
   public getMapSelecionados(): Map<string, DataTree> | undefined {
-    if (this.dados === undefined) { return undefined; }
-    return this.getMapSelecionadosAux(this.dados);
+    return this._mapSelecionados;
   }
 
-  private getMapSelecionadosAux(data: DataTree[]): Map<string, DataTree> | undefined {
-    let rt: Map<string, DataTree> | undefined = undefined;
-    if (data === undefined || data.length <= 0) { return rt; }
-
-    rt = new Map<string, DataTree>();
-    data.forEach(d => {
-      if (d === undefined) { return; }
-      if (d.selecionado) {
-        rt?.set(d.id, d);
-      }
-      if (!d.temFilhos() || d.filhos === undefined) { return; }
-      let aux = this.getMapSelecionadosAux(d.filhos);
-      if (aux === undefined || aux === null || aux.size <= 0) { return; }
-      aux.forEach(a => {
-        if (!a.selecionado) { return; }
-        rt?.set(a.id, a);
-      });
-    });
-    return rt;
-  }
-
-  // TODO: Atualizar este método -> retornar todos os selecionados, independente do filtro aplicado
+  // retorna todos os selecionados, independentemente do filtro aplicado
   public getIdSelecionados(): string[] | undefined {
-    if (this.dados === undefined) { return undefined; }
-    return this.getIdSelecionadosAux(this.dados);
-  }
-
-  private getIdSelecionadosAux(data: DataTree[]): string[] | undefined {
-    let rt: string[] | undefined = undefined;
-    if (data === undefined || data.length <= 0) { return rt; }
-
-    rt = [];
-    data.forEach(d => {
-      if (d === undefined) { return; }
-      if (d.selecionado) {
-        rt?.push(d.id);
-      }
-      if (!d.temFilhos() || d.filhos === undefined) { return; }
-      let aux = this.getIdSelecionadosAux(d.filhos);
-      if (aux === undefined || aux === null || aux.length <= 0) { return; }
-      aux.forEach(a => rt?.push(a));
-    });
-    return rt;
+    if (this._mapSelecionados === undefined) { return undefined; }
+    return [...this._mapSelecionados.keys()];
   }
   //#endregion
 
   //#region aux selecionaritem.selecionado
-  private limparSelecionadosEntrada(item: DataTree | undefined): void {
-    // limpa qualquer pré-delecção de dados de entrada. A seleção é mantida por "selecionarFromService()"
-    if (item === undefined) { return; }
-    item.selecionado = false;
-    if (item.temFilhos() && item.filhos !== undefined) {
-      item.filhos.forEach(f => this.limparSelecionadosEntrada(f));
-    }
-  }
+  // private limparSelecionadosEntrada(item: DataTree | undefined): void {
+  //   // limpa qualquer pré-delecção de dados de entrada. A seleção é mantida por "selecionarFromService()"
+  //   if (item === undefined) { return; }
+  //   item.selecionado = false;
+  //   if (item.temFilhos() && item.filhos !== undefined) {
+  //     item.filhos.forEach(f => this.limparSelecionadosEntrada(f));
+  //   }
+  // }
 
-  public limparSelecao(): void {
+  public limparSelecao(limparMemoria: boolean = false): void {
     this.selecionarDados(this.dados, false);
+    if (limparMemoria) { this._mapSelecionados.clear(); }
   }
 
   public selecionarTodos(): void {
@@ -177,6 +145,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     data.forEach(d => {
       if (d === undefined) { return; }
       d.selecionado = selecionar;
+      this.atualizarSelecionadosMem(d);
       if (!d.temFilhos() || d.filhos === undefined) { return; }
       this.selecionarDados(d.filhos, selecionar);
     });
@@ -184,7 +153,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
   public selecionarIds(ids: string[] | undefined, desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
     if (ids === undefined) { return; }
-    if (desmarcarDemais) { this.limparSelecao(); }
+    if (desmarcarDemais) { this.limparSelecao(true); }
     if (this.dados === undefined || ids === undefined || ids.length <= 0) { return; }
     if (!this.MultiplaSelecao) { ids = [ids[0]]; }
     this.selIdsAux(this.dados, ids, selecionarFilhos);
@@ -196,6 +165,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       if (d === undefined) { return; }
       if (ids.indexOf(d.id) >= 0) {
         d.selecionado = true;
+        this.atualizarSelecionadosMem(d);
         if (selecionarFilhos) {
           d.selecionarFilhos();
         }
@@ -276,31 +246,15 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  private loadChieldsAux2(item: DataTree | undefined): void {
-    if (item === undefined) { return; }
-
-    this.service.loadFilhos(item.id)?.subscribe(filhos => {
-      if (filhos === undefined) { return; }
-      item.filhos = [];
-      filhos.forEach(f => {
-        if (f === undefined) { return; }
-        item.addFilho(f, false);
-
-        this.loadChieldsAux2(f);
-      });
-      // if (d.temFilhos() && d.filhos !== undefined) {
-      //   d.filhos.forEach(f => {
-      //     this.loadChieldsAux(d.filhos);
-      //   });
-      // }
-    });
-  }
-
   private loadChieldsAux(item: DataTree | undefined): void {
     if (item === undefined || item.id === undefined || item.jaClicado) { return; }
     item.isLoading = true;
     item.jaClicado = true;
     item.filhos = []; // evitar que filhos sejam re-adds
+
+    // item.filhoAdicionado.subscribe(fadd => {
+    //   this.loadChieldsAux(fadd);
+    // });
 
     let filhos$: Observable<DataTree[] | undefined> | undefined = this.service.loadFilhos(item.id);
     if (filhos$ === null || filhos$ === undefined) {
@@ -315,11 +269,35 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
         item.addFilho(f, false);
 
         this.loadChieldsAux(f);
+
+        // f.filhoAdicionado.subscribe(fadd => {
+        //   this.loadChieldsAux(fadd);
+        // });
+
+        let idsSelecionados = this.getIdSelecionados();
+        if (idsSelecionados !== undefined) { this.selecionarIds(idsSelecionados); }
+
       });
       item.aberto = true;
     });
   }
 
+  //#endregion
+
+  //#region controle selecionados
+  private atualizarSelecionadosMem(item: DataTree | undefined): void {
+    if (item === undefined || item.id === undefined) { return; }
+    if (item.selecionado) {
+      this._mapSelecionados.set(item.id, item);
+    } else {
+      if (this._mapSelecionados.has(item.id)) {
+        this._mapSelecionados.delete(item.id);
+      }
+    }
+    if (item.temFilhos() && item.filhos !== undefined) {
+      item.filhos.forEach(f => this.atualizarSelecionadosMem(f));
+    }
+  }
   //#endregion
 
   //this.delay(300).then(any => {});

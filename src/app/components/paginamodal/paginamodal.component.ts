@@ -34,7 +34,6 @@ export class PaginamodalComponent implements AfterViewInit {
     this.loadInitialData();
 
     // if (this.treeSimple !== undefined){
-    //   // não usar com o random -> controle de ids repetidos
     //   this.treeSimple.loadAll();
     // }
   }
@@ -71,14 +70,6 @@ export class PaginamodalComponent implements AfterViewInit {
 
   //#region Filtrar Árvore
   public pesquisarArvore(event: any): void {
-    this.filtrarArvore(event);
-  }
-
-  public onKeyupEvent(event: any): void {
-    this.filtrarArvore(event);
-  }
-
-  private filtrarArvore(event: any): void {
     if (event === undefined) {
       //this.loadInitialData();
       this.treeSimple?.closeExpandAllNodes();

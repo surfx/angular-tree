@@ -1,4 +1,10 @@
-<input type="text" (keyup)="onKeyupEvent($event)" class="input_filter_tree" /><br /><br />
+<input 
+    type="text" 
+    (keyup)="pesquisarArvore($event)" 
+    class="input_filter_tree" 
+    #input_filter
+/>
+<br /><br />
 
 
 <!-- [dados]="data$ | async" -->
@@ -14,7 +20,7 @@
     <app-tree-simple 
         [ExibirCheckBox]="true"
         [MultiplaSelecao]="true"
-        #componente_teste
+        #tree_simple
     ></app-tree-simple>
 </div>
 
@@ -36,7 +42,7 @@
         </a><br />
     </div>
     <div>
-        <a href="javascript:void(0);" (click)="limparSelecao()">
+        <a href="javascript:void(0);" (click)="limparSelecao(true)">
             <img src="../../../assets/imagens_action/list_clear_sel.svg" alt="Limpar Seleção" style="width: 13px;">
             Limpar Selecao
         </a><br />
@@ -49,7 +55,7 @@
             Selecionar Alguns
         </a><br /><br />
 
-        <a href="javascript:void(0);" (click)="limparData()">
+        <a href="javascript:void(0);" (click)="limparData(true)">
             <img src="../../../assets/imagens_action/clear.svg" alt="Limpar" style="width: 13px;">
             Limpar
         </a>
