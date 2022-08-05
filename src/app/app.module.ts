@@ -3,20 +3,20 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ArvoreSimpleDataComponent } from './components/arvore-simple-data/arvore-simple-data.component';
+import { ArvoreSimpleRecursiveComponent } from './components/tree/arvore-simple-recursive/arvore-simple-recursive.component';
 import { PaginainicialComponent } from './components/paginainicial/paginainicial.component';
 import { PaginamodalComponent } from './components/paginamodal/paginamodal.component';
+import { TreeSimpleComponent } from './components/tree/tree-simple/tree-simple.component';
 import { TestesComponent } from './components/testes/testes.component';
-import { ComponenteTesteComponent } from './components/testes/componente-teste/componente-teste.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ArvoreSimpleDataComponent,
+    ArvoreSimpleRecursiveComponent,
     PaginainicialComponent,
     PaginamodalComponent,
     TestesComponent,
-    ComponenteTesteComponent
+    TreeSimpleComponent
   ],
   imports: [
     BrowserModule,

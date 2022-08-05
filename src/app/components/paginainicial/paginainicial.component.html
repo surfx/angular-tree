@@ -1,16 +1,16 @@
-<input type="text" (change)="pesquisarArvore($event)" (keyup)="onKeyupEvent($event)" class="input_filter_tree" /><br /><br />
+<input type="text" (keyup)="pesquisarArvore($event)" class="input_filter_tree" /><br /><br />
 
 
 <!-- [dados]="data$ | async" -->
 
 <div class="div_tree_simpledata">
-    <app-arvore-simple-data
+    <app-arvore-simple-recursive
         id="tree_simple"
         [ExibirCheckBox]="true"
         [ControlarSelecionados]="true"
         [multiplaSelecao]="true"
         #tree_simple
-    ></app-arvore-simple-data>
+    ></app-arvore-simple-recursive>
 </div>
 
 
@@ -77,11 +77,6 @@
         </a>
     </div>
 </section>
-
-<a href="javascript:void(0);" (click)="testeAddFilho2()">
-    testeAddFilho2()
-</a>
-
 
 
 <br /><br />

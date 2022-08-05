@@ -6,11 +6,11 @@ import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.servic
 
 
 @Component({
-  selector: 'app-arvore-simple-data',
-  templateUrl: './arvore-simple-data.component.html',
-  styleUrls: ['./arvore-simple-data.component.css']
+  selector: 'app-arvore-simple-recursive',
+  templateUrl: './arvore-simple-recursive.component.html',
+  styleUrls: ['./arvore-simple-recursive.component.css']
 })
-export class ArvoreSimpleDataComponent implements OnInit, OnDestroy, AfterContentChecked {
+export class ArvoreSimpleRecursiveComponent implements OnInit, OnDestroy, AfterContentChecked {
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('ControlarSelecionados') ControlarSelecionados: boolean | undefined;

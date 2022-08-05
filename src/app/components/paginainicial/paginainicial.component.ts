@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
-import { ArvoreSimpleDataComponent } from '../arvore-simple-data/arvore-simple-data.component';
+import { ArvoreSimpleRecursiveComponent } from '../tree/arvore-simple-recursive/arvore-simple-recursive.component';
 
 @Component({
   selector: 'app-paginainicial',
@@ -12,7 +12,7 @@ import { ArvoreSimpleDataComponent } from '../arvore-simple-data/arvore-simple-d
 })
 export class PaginainicialComponent implements AfterViewInit {
 
-  @ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
+  @ViewChild('tree_simple') treeSimple: ArvoreSimpleRecursiveComponent | undefined;
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
@@ -109,14 +109,6 @@ export class PaginainicialComponent implements AfterViewInit {
 
   //#region Filtrar Árvore
   public pesquisarArvore(event: any): void {
-    this.filtrarArvore(event);
-  }
-
-  public onKeyupEvent(event: any): void {
-    this.filtrarArvore(event);
-  }
-
-  private filtrarArvore(event: any): void {
     if (event === undefined) {
       //this.loadInitialData();
       this.treeSimple?.closeExpandAllNodes();
@@ -164,37 +156,6 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
 
-
-  public testeAddFilho2(): void {
-    this.loadInitialData();
-    this.delay(300).then(any => {
-      if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return; }
-      if (this.treeSimple.dados !== undefined) {
-        this.treeSimple.dados.forEach(d => {
-          this.loadChieldsAux(d);
-        });
-      }
-    });
-  }
-
-  private loadChieldsAux(item: DataTree | undefined): void {
-    if (item === undefined) { return; }
-    this.service.loadFilhos(item.id)?.subscribe(filhos => {
-      if (filhos === undefined) { return; }
-      item.filhos = [];
-      filhos.forEach(f => {
-        if (f === undefined) { return; }
-        item.addFilho(f, false);
-
-        this.loadChieldsAux(f);
-      });
-      // if (d.temFilhos() && d.filhos !== undefined) {
-      //   d.filhos.forEach(f => {
-      //     this.loadChieldsAux(d.filhos);
-      //   });
-      // }
-    });
-  }
 
   //this.delay(300).then(any => {});
   async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }

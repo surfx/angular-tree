@@ -9,13 +9,13 @@
             <img src="../../../assets/tree_imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
         </li>
         <ng-template [ngIf]="item.temFilhos() && item.aberto">
-            <app-arvore-simple-data 
+            <app-arvore-simple-recursive
                 [dados]="item.filhos" 
                 [ExibirCheckBox]="ExibirCheckBox" 
                 [ControlarSelecionados]="ControlarSelecionados"
                 [multiplaSelecao]="multiplaSelecao"
                 (clearAllSel)="clearAllSelEvent()"
-            ></app-arvore-simple-data>
+            ></app-arvore-simple-recursive>
         </ng-template>
     </ul>
 </ng-template>

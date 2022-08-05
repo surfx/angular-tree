@@ -4,11 +4,11 @@ import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 
 @Component({
-  selector: 'app-componente-teste',
-  templateUrl: './componente-teste.component.html',
-  styleUrls: ['./componente-teste.component.css']
+  selector: 'app-tree-simple',
+  templateUrl: './tree-simple.component.html',
+  styleUrls: ['./tree-simple.component.css']
 })
-export class ComponenteTesteComponent implements OnInit, AfterContentChecked {
+export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('MultiplaSelecao') MultiplaSelecao: boolean | undefined;
@@ -125,6 +125,7 @@ export class ComponenteTesteComponent implements OnInit, AfterContentChecked {
     return rt;
   }
 
+  // TODO: Atualizar este método -> retornar todos os selecionados, independente do filtro aplicado
   public getIdSelecionados(): string[] | undefined {
     if (this.dados === undefined) { return undefined; }
     return this.getIdSelecionadosAux(this.dados);

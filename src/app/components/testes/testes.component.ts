@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
-import { ArvoreSimpleDataComponent } from '../arvore-simple-data/arvore-simple-data.component';
-import { ComponenteTesteComponent } from './componente-teste/componente-teste.component';
+import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
   selector: 'app-testes',
@@ -15,7 +13,7 @@ export class TestesComponent implements AfterViewInit, OnInit {
 
 
   //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
-  @ViewChild('componente_teste') treeSimple: ComponenteTesteComponent | undefined;
+  @ViewChild('componente_teste') treeSimple: TreeSimpleComponent | undefined;
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
@@ -122,7 +120,7 @@ export class TestesComponent implements AfterViewInit, OnInit {
         if (!this._idsSel.has(id)) {
           this._idsSel.add(id);
         }
-        // Como saber os deselecionados ?? - EventEmitter ?
+        // Como saber os deselecionados ?? - EventEmitter ? - propriedade dentro do componente ??
       });
     }
 

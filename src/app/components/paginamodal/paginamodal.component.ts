@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
-import { ArvoreSimpleDataComponent } from '../arvore-simple-data/arvore-simple-data.component';
+import { ArvoreSimpleRecursiveComponent } from '../tree/arvore-simple-recursive/arvore-simple-recursive.component';
 
 @Component({
   selector: 'app-paginamodal',
@@ -15,7 +15,7 @@ export class PaginamodalComponent implements AfterViewInit {
   mostrar: boolean = true;
   showOverlay: boolean = true;
 
-  @ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
+  @ViewChild('tree_simple') treeSimple: ArvoreSimpleRecursiveComponent | undefined;
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
