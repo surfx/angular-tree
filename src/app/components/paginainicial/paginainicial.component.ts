@@ -24,13 +24,14 @@ export class PaginainicialComponent implements AfterViewInit {
     private idsSelServ: IdsSelecionadosService
   ) {
     this.data$ = this.service.getInitialData();
-    this.service.getData()?.subscribe(dados => this.alldata = dados);
+    let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
   }
 
   ngAfterViewInit(): void {
-    this.data$?.subscribe(data => {
-      if (data === undefined) { return; }
+    let subscriber = this.data$?.subscribe(data => {
+      if (data === undefined) { subscriber?.unsubscribe(); return; }
       this.treeSimple?.setData(data);
+      subscriber?.unsubscribe();
     });
   }
 
@@ -76,7 +77,7 @@ export class PaginainicialComponent implements AfterViewInit {
 
   public loadAll(): void {
     if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
-      this.service.getData()?.subscribe(dados => this.alldata = dados);
+      let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
     }
     this.treeSimple?.setData(this.alldata, true);
   }
@@ -92,10 +93,11 @@ export class PaginainicialComponent implements AfterViewInit {
     }
     let obs$ = this.service.getInitialData();
     if (obs$ === undefined) { return; }
-    obs$.subscribe(data => {
+    let subscriber = obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
       this._dataInicial = data;
+      subscriber.unsubscribe();
     });
   }
 

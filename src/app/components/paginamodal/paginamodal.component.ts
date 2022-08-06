@@ -27,7 +27,7 @@ export class PaginamodalComponent implements AfterViewInit {
     private idsSelServ: IdsSelecionadosService
   ) {
     this.data$ = this.service.getInitialData();
-    this.service.getData()?.subscribe(dados => this.alldata = dados);
+    let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
   }
 
   ngAfterViewInit(): void {
@@ -51,10 +51,11 @@ export class PaginamodalComponent implements AfterViewInit {
       });
       return;
     }
-    this.data$?.subscribe(data => {
+    let subscriber = this.data$?.subscribe(data => {
       if (data === undefined) { return; }
       this._dataInicial = data;
       this.treeSimple?.setData(data);
+      subscriber?.unsubscribe();
     });
   }
 
@@ -84,10 +85,11 @@ export class PaginamodalComponent implements AfterViewInit {
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
     let idsS = this.treeSimple?.getIdSelecionados();
-    temp.subscribe(dados => {
+    let subscriber = temp.subscribe(dados => {
       if (dados === undefined) { return; }
       this.treeSimple?.setData(dados, true);
       this.treeSimple?.selecionarIds(idsS);
+      subscriber.unsubscribe();
     });
   }
   //#endregion

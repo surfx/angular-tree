@@ -144,13 +144,14 @@ export class ArvoreSimpleRecursiveComponent implements OnInit, OnDestroy, AfterC
       return;
     }
 
-    filhos$.subscribe(filhosData => {
+    let subscriber = filhos$.subscribe(filhosData => {
       item.isLoading = false;
-      if (filhosData === undefined) { return; }
+      if (filhosData === undefined) { subscriber.unsubscribe(); return; }
       filhosData.forEach(f => {
         item.addFilho(f, false);
       });
       item.aberto = true;
+      subscriber.unsubscribe();
     });
   }
 

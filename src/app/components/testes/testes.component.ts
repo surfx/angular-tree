@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
@@ -26,16 +26,17 @@ export class TestesComponent implements AfterViewInit, OnInit {
     private service: DadosArvoreService
   ) {
     this.data$ = this.service.getInitialData();
-    this.service.getData()?.subscribe(dados => this.alldata = dados);
+    let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
   }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.data$?.subscribe(data => {
+    let subscriber = this.data$?.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data);
+      subscriber?.unsubscribe();
     });
   }
 
@@ -86,7 +87,7 @@ export class TestesComponent implements AfterViewInit, OnInit {
     //let idsSelecionados = this.treeSimple?.getIdSelecionados();
 
     if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
-      this.service.getData()?.subscribe(dados => this.alldata = dados);
+      let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
     }
     this.treeSimple?.setData(this.alldata, true);
     //this.treeSimple?.selecionarIds(idsSelecionados);
@@ -94,8 +95,8 @@ export class TestesComponent implements AfterViewInit, OnInit {
     this.setInputText('');
   }
 
-  public loadInitialData(): void {
-    if (this.treeSimple === undefined) { return; }
+  public loadInitialData(): Subject<void> | undefined {
+    if (this.treeSimple === undefined) { return undefined; }
     //let idsSelecionados = this.treeSimple.getIdSelecionados();
 
     this.limparData(false);
@@ -106,17 +107,23 @@ export class TestesComponent implements AfterViewInit, OnInit {
 
         //this.treeSimple?.selecionarIds(idsSelecionados);
       });
-      return;
+      return undefined;
     }
     let obs$ = this.service.getInitialData();
-    if (obs$ === undefined) { return; }
-    obs$.subscribe(data => {
+    if (obs$ === undefined) { return undefined; }
+
+    let rt: Subject<void> = new Subject<void>();
+    let subscriber = obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
       this._dataInicial = data;
 
       //this.treeSimple?.selecionarIds(idsSelecionados);
+
+      rt.next();
+      subscriber.unsubscribe();
     });
+    return rt;
   }
 
   // public loadInitialData(): void {
@@ -133,7 +140,10 @@ export class TestesComponent implements AfterViewInit, OnInit {
   public pesquisarArvore(event: any): void {
     if (event === undefined) {
       if (this.houveFiltro) {
-        this.loadInitialData();
+        let subscriber = this.loadInitialData()?.subscribe(_ => {
+          this.treeSimple?.closeExpandAllNodes();
+          subscriber?.unsubscribe();
+        });
         this.houveFiltro = false;
       }
       this.treeSimple?.closeExpandAllNodes();
@@ -142,7 +152,10 @@ export class TestesComponent implements AfterViewInit, OnInit {
     let valor = event.target.value;
     if (valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
-        this.loadInitialData();
+        let subscriber = this.loadInitialData()?.subscribe(_ => {
+          this.treeSimple?.closeExpandAllNodes();
+          subscriber?.unsubscribe();
+        });
         this.houveFiltro = false;
       }
       this.treeSimple?.closeExpandAllNodes();
@@ -162,22 +175,29 @@ export class TestesComponent implements AfterViewInit, OnInit {
 
     // });
 
-    temp.subscribe(dados => {
-      if (dados === undefined) { return; }
+    let subscriber = temp.subscribe(dados => {
+      if (dados === undefined) { subscriber.unsubscribe(); return; }
       this.houveFiltro = true;
       this.delay(30).then(any => {
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
       });
+      subscriber.unsubscribe();
     });
   }
   //#endregion
 
   public loadAllTree(): void {
-    this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
-    this.delay(200).then(any => {
-      this.treeSimple?.loadAll();
+    // o load all tree precisa que a árvore possua dados iniciais
+    let subscriber = this.loadInitialData()?.subscribe(_ => {
+      if (this.treeSimple !== undefined) {
+        this.treeSimple?.loadAll();
+      }
+      subscriber?.unsubscribe();
     });
+    // this.delay(200).then(any => {
+    //   this.treeSimple?.loadAll();
+    // });
   }
 
   public collapseTree(): void {

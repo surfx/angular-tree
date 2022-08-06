@@ -14,12 +14,33 @@ export class DadosArvoreService {
   private jsonData;
 
   constructor() {
+    //this.jsonData = this.getJsonDataTeste0();
     //this.jsonData = this.getJsonDataTeste1();
     this.jsonData = this.getJsonDataTeste2();
     //this.jsonData = this.gerarArvoreJsonRandomica();
   }
 
   //#endregion data base simulada
+  private getJsonDataTeste0() {
+    return [
+      {
+        id: '1', text: 'item 1', chields: [
+          {
+            id: '1.1', text: 'item 1.1', chields: [
+              { id: '2.1', text: 'item 2.1' },
+              { id: '2.2', text: 'item 2.2', chields: [
+                { id: '3.2.1.1', text: 'item 3.2.1.1' },
+                { id: '3.2.2.1', text: 'item 3.2.2.1' }
+              ] }
+            ]
+          },
+          { id: '1.2', text: 'item 1.2' },
+          { id: '1.3', text: 'item 1.3' }
+        ]
+      }
+    ];
+  }
+
   private getJsonDataTeste1() {
     return [
       {

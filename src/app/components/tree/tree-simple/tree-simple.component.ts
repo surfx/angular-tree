@@ -115,18 +115,15 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     if (this._mapSelecionados === undefined) { return undefined; }
     return [...this._mapSelecionados.keys()];
   }
+
+  public getDataTreeSelecionados(): DataTree[] | undefined {
+    if (this._mapSelecionados === undefined) { return undefined; }
+    return [...this._mapSelecionados.values()];
+  }
+
   //#endregion
 
   //#region aux selecionaritem.selecionado
-  // private limparSelecionadosEntrada(item: DataTree | undefined): void {
-  //   // limpa qualquer pré-delecção de dados de entrada. A seleção é mantida por "selecionarFromService()"
-  //   if (item === undefined) { return; }
-  //   item.selecionado = false;
-  //   if (item.temFilhos() && item.filhos !== undefined) {
-  //     item.filhos.forEach(f => this.limparSelecionadosEntrada(f));
-  //   }
-  // }
-
   public limparSelecao(limparMemoria: boolean = false): void {
     this.selecionarDados(this.dados, false);
     if (limparMemoria) { this._mapSelecionados.clear(); }
@@ -216,7 +213,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   }
   //#endregion
 
-  //#region  Load Chields
+  //#region Load Chields
   private loadAndSetFilhos(item: DataTree | undefined): void {
     if (item === undefined || item.id === undefined || item.jaClicado) { return; }
     item.isLoading = true;
@@ -229,13 +226,14 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    filhos$.subscribe(filhosData => {
+    let subscriber = filhos$.subscribe(filhosData => {
       item.isLoading = false;
-      if (filhosData === undefined) { return; }
+      if (filhosData === undefined) { subscriber.unsubscribe();return; }
       filhosData.forEach(f => {
         item.addFilho(f, false);
       });
       item.aberto = true;
+      subscriber.unsubscribe();
     });
   }
 
@@ -262,9 +260,9 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       return;
     }
 
-    filhos$.subscribe(filhosData => {
+    let subscriber = filhos$.subscribe(filhosData => {
       item.isLoading = false;
-      if (filhosData === undefined) { return; }
+      if (filhosData === undefined) { subscriber.unsubscribe(); return; }
       filhosData.forEach(f => {
         item.addFilho(f, false);
 
@@ -279,9 +277,9 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
       });
       item.aberto = true;
+      subscriber.unsubscribe();
     });
   }
-
   //#endregion
 
   //#region controle selecionados
