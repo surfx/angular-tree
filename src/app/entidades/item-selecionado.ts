@@ -1,3 +1,6 @@
+/**
+ * @deprecated classe deprecada
+ */
 export class ItemSelecionado {
 
     id: string;

@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { DataTree } from '../entidades/data-tree';
 import { ItemSelecionado } from '../entidades/item-selecionado';
 
-
+/**
+ * @deprecated serviço deprecado
+ */
 @Injectable({
   providedIn: 'root'
 })

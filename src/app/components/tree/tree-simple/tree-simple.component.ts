@@ -1,4 +1,4 @@
-import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
+import { AfterContentChecked, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
@@ -12,6 +12,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('MultiplaSelecao') MultiplaSelecao: boolean | undefined;
+  @Output('ClickItem') ClickItem: EventEmitter<DataTree> = new EventEmitter<DataTree>();
 
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
@@ -101,6 +102,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       item.selecionarFilhos();
     }
 
+    if (this.ClickItem !== undefined) { this.ClickItem.emit(item); }
     this.atualizarSelecionadosMem(item);
   }
 
@@ -228,7 +230,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
     let subscriber = filhos$.subscribe(filhosData => {
       item.isLoading = false;
-      if (filhosData === undefined) { subscriber.unsubscribe();return; }
+      if (filhosData === undefined) { subscriber.unsubscribe(); return; }
       filhosData.forEach(f => {
         item.addFilho(f, false);
       });

@@ -1,10 +1,12 @@
 import { AfterContentChecked, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
 
-
+/**
+ * @deprecated componente deprecado
+ */
 @Component({
   selector: 'app-arvore-simple-recursive',
   templateUrl: './arvore-simple-recursive.component.html',
@@ -27,7 +29,7 @@ export class ArvoreSimpleRecursiveComponent implements OnInit, OnDestroy, AfterC
   get dados(): DataTree[] | undefined { return this._dados; }
 
   // add filho
-  private _subscriptions: Subscription[] = [];
+  //private _subscriptions: Subscription[] = [];
   public hasData: boolean = false;
 
   constructor(
@@ -45,9 +47,9 @@ export class ArvoreSimpleRecursiveComponent implements OnInit, OnDestroy, AfterC
   }
 
   ngOnDestroy(): void {
-    if (this._subscriptions !== undefined && this._subscriptions.length > 0) {
-      this._subscriptions.forEach(s => { if (s !== undefined) { s.unsubscribe(); } });
-    }
+    // if (this._subscriptions !== undefined && this._subscriptions.length > 0) {
+    //   this._subscriptions.forEach(s => { if (s !== undefined) { s.unsubscribe(); } });
+    // }
   }
 
   public setData(data: DataTree[] | undefined, ajustarLoading: boolean = false): void {
@@ -311,11 +313,11 @@ export class ArvoreSimpleRecursiveComponent implements OnInit, OnDestroy, AfterC
         this.loadAllAux(f);
       });
     }
-    let subs: Subscription =
-      item.filhoAdicionado.subscribe(fadd => {
-        this.loadAllAux(fadd);
-      });
-    this._subscriptions.push(subs);
+    // let subs: Subscription =
+    //   item.filhoAdicionado.subscribe(fadd => {
+    //     this.loadAllAux(fadd);
+    //   });
+    // this._subscriptions.push(subs);
 
     this.selecionarFromService();
   }

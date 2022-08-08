@@ -3,17 +3,22 @@
 </button>
 
 <br /><br />
-{{getSelecionadosServicoItemSelecionado()}}
+{{selecionados}}
 <br /><br />
 
-<ng-container *ngIf="mostrar">
+<div [hidden]="!mostrar">
     <div class="modal">
         <ul class="ul_itens_tree">
             <li>
-                <input type="text" (keyup)="pesquisarArvore($event)" class="input_filter_tree" />
+                <input 
+                    type="text" 
+                    (keyup)="pesquisarArvore($event)" 
+                    class="input_filter_tree" 
+                    #input_filter
+                />
             </li>
             <li>
-                <a href="javascript:void(0);" (click)="limparSelecao()">
+                <a href="javascript:void(0);" (click)="limparSelecao(true)">
                     <img src="../../../assets/imagens_action/list_clear_sel.svg" alt="Limpar Seleção" style="width: 13px; margin-top: 5pt;">
                 </a>
             </li>
@@ -35,15 +40,14 @@
         </ul>
 
         <div class="div_tree_simpledata">
-            <app-arvore-simple-recursive 
-                [ExibirCheckBox]="true" 
-                [ControlarSelecionados]="true" 
-                [multiplaSelecao]="true"
+            <app-tree-simple 
+                [ExibirCheckBox]="true"
+                [MultiplaSelecao]="true"
                 #tree_simple
-            ></app-arvore-simple-recursive>
+            ></app-tree-simple>
         </div>
 
         <button (click)="toggle();">ok</button>
     </div>
     <div (click)="toggle()" class="overlay" *ngIf="showOverlay && mostrar"></div>
-</ng-container>
+</div>

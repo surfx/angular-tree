@@ -11,7 +11,6 @@ import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 })
 export class TestesComponent implements AfterViewInit, OnInit {
 
-
   //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
   @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
   @ViewChild('input_filter') inputFilterTree: ElementRef | undefined;
@@ -220,6 +219,11 @@ export class TestesComponent implements AfterViewInit, OnInit {
     if (this.inputFilterTree !== undefined) {
       this.inputFilterTree.nativeElement.value = texto;
     }
+  }
+
+  //----
+  public onclickitem(item: DataTree): void {
+    console.log('onclickitem', item);
   }
 
   //this.delay(300).then(any => {});

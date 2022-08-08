@@ -1,9 +1,8 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { IdsSelecionadosService } from 'src/app/servicos/ids-selecionados.service';
-import { ArvoreSimpleRecursiveComponent } from '../tree/arvore-simple-recursive/arvore-simple-recursive.component';
+import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
   selector: 'app-paginainicial',
@@ -12,7 +11,11 @@ import { ArvoreSimpleRecursiveComponent } from '../tree/arvore-simple-recursive/
 })
 export class PaginainicialComponent implements AfterViewInit {
 
-  @ViewChild('tree_simple') treeSimple: ArvoreSimpleRecursiveComponent | undefined;
+
+  //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
+  @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
+  @ViewChild('input_filter') inputFilterTree: ElementRef | undefined;
+
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
@@ -20,16 +23,18 @@ export class PaginainicialComponent implements AfterViewInit {
   private _dataInicial: DataTree[] | undefined; // memória
 
   constructor(
-    private service: DadosArvoreService,
-    private idsSelServ: IdsSelecionadosService
+    private service: DadosArvoreService
   ) {
     this.data$ = this.service.getInitialData();
     let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
   }
 
+  ngOnInit(): void {
+  }
+
   ngAfterViewInit(): void {
     let subscriber = this.data$?.subscribe(data => {
-      if (data === undefined) { subscriber?.unsubscribe(); return; }
+      if (data === undefined) { return; }
       this.treeSimple?.setData(data);
       subscriber?.unsubscribe();
     });
@@ -56,8 +61,8 @@ export class PaginainicialComponent implements AfterViewInit {
     return this.service.loadFilhos(id);
   }
 
-  public limparSelecao(): void {
-    this.treeSimple?.limparSelecao(true);
+  public limparSelecao(limparMemoria: boolean): void {
+    this.treeSimple?.limparSelecao(limparMemoria);
   }
 
   public selecionarTodos(): void {
@@ -66,39 +71,59 @@ export class PaginainicialComponent implements AfterViewInit {
 
   public selecionarIds(): void {
     let ids: string[] = ['1', '1.2', '3.3', '3.1'];
+    //this.treeSimple?.limparSelecao(true);
     this.treeSimple?.selecionarIds(ids, true, false);
   }
 
-  public limparData(): void {
+  public limparData(limparMemoria: boolean): void {
     this._dataInicial = undefined;
     this.treeSimple?.limparData();
-    this.limparSelecao();
+    this.limparSelecao(limparMemoria);
+
+    this.setInputText('');
   }
 
   public loadAll(): void {
+    //let idsSelecionados = this.treeSimple?.getIdSelecionados();
+
     if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
       let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
     }
     this.treeSimple?.setData(this.alldata, true);
+    //this.treeSimple?.selecionarIds(idsSelecionados);
+
+    this.setInputText('');
   }
 
-  public loadInitialData(): void {
-    this.limparData();
+  public loadInitialData(): Subject<void> | undefined {
+    if (this.treeSimple === undefined) { return undefined; }
+    //let idsSelecionados = this.treeSimple.getIdSelecionados();
+
+    this.limparData(false);
     if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
       this.delay(30).then(any => {
         this.treeSimple?.setData(this._dataInicial);
         this.treeSimple?.closeExpandAllNodes(true);
+
+        //this.treeSimple?.selecionarIds(idsSelecionados);
       });
-      return;
+      return undefined;
     }
     let obs$ = this.service.getInitialData();
-    if (obs$ === undefined) { return; }
+    if (obs$ === undefined) { return undefined; }
+
+    let rt: Subject<void> = new Subject<void>();
     let subscriber = obs$.subscribe(data => {
       if (data === undefined) { return; }
       this.treeSimple?.setData(data, true);
       this._dataInicial = data;
+
+      //this.treeSimple?.selecionarIds(idsSelecionados);
+
+      rt.next();
       subscriber.unsubscribe();
     });
+    return rt;
   }
 
   // public loadInitialData(): void {
@@ -111,32 +136,68 @@ export class PaginainicialComponent implements AfterViewInit {
   // }
 
   //#region Filtrar Árvore
+  private houveFiltro: boolean = false;
   public pesquisarArvore(event: any): void {
     if (event === undefined) {
-      //this.loadInitialData();
+      if (this.houveFiltro) {
+        let subscriber = this.loadInitialData()?.subscribe(_ => {
+          this.treeSimple?.closeExpandAllNodes();
+          subscriber?.unsubscribe();
+        });
+        this.houveFiltro = false;
+      }
       this.treeSimple?.closeExpandAllNodes();
       return;
     }
     let valor = event.target.value;
     if (valor === undefined || valor.length <= 0) {
-      //this.loadInitialData();
+      if (this.houveFiltro) {
+        let subscriber = this.loadInitialData()?.subscribe(_ => {
+          this.treeSimple?.closeExpandAllNodes();
+          subscriber?.unsubscribe();
+        });
+        this.houveFiltro = false;
+      }
       this.treeSimple?.closeExpandAllNodes();
       return;
     }
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
-    let idsS = this.treeSimple?.getIdSelecionados();
-    temp.subscribe(dados => {
-      if (dados === undefined) { return; }
-      this.treeSimple?.setData(dados, true);
-      this.treeSimple?.selecionarIds(idsS);
+
+    // temp.subscribe(dados => {
+    //   if (dados === undefined) { return; }
+    //   this.treeSimple?.limparData();
+
+    //   this.houveFiltro = true;
+    //   this.treeSimple?.setData(dados, false);
+    //   this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
+    //   //this.treeSimple?.selecionarIds(idsS);
+
+    // });
+
+    let subscriber = temp.subscribe(dados => {
+      if (dados === undefined) { subscriber.unsubscribe(); return; }
+      this.houveFiltro = true;
+      this.delay(30).then(any => {
+        this.treeSimple?.setData(dados, false);
+        this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
+      });
+      subscriber.unsubscribe();
     });
   }
   //#endregion
 
   public loadAllTree(): void {
-    this.loadInitialData(); // o load all tree precisa que a árvore possua dados iniciais
-    this.treeSimple?.loadAll();
+    // o load all tree precisa que a árvore possua dados iniciais
+    let subscriber = this.loadInitialData()?.subscribe(_ => {
+      if (this.treeSimple !== undefined) {
+        this.treeSimple?.loadAll();
+      }
+      subscriber?.unsubscribe();
+    });
+    // this.delay(200).then(any => {
+    //   this.treeSimple?.loadAll();
+    // });
   }
 
   public collapseTree(): void {
@@ -148,17 +209,23 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   //----
-  public getSelecionadosServico(): void {
-    if (this.idsSelServ === undefined) { return; }
-    console.log(this.idsSelServ.getIdsSelecionados());
+  public getSelecionados(): string[] | undefined {
+    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return undefined; }
+    let map: Map<string, DataTree> | undefined = this.treeSimple.getMapSelecionados();
+    if (map === undefined) { return undefined; }
+    return [...map.values()].map(item => item.toString());
   }
 
-  public getSelecionadosServicoItemSelecionado(): string[] | undefined {
-    if (this.idsSelServ === undefined) { return undefined; }
-    return this.idsSelServ.getItemsSelecionados()?.map(item => item.toString());
+  private setInputText(texto: string = ''): void {
+    if (this.inputFilterTree !== undefined) {
+      this.inputFilterTree.nativeElement.value = texto;
+    }
   }
 
-
+  //----
+  public onclickitem(item: DataTree): void {
+    console.log('onclickitem', item);
+  }
 
   //this.delay(300).then(any => {});
   async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
