@@ -36,6 +36,10 @@ export class DataTree {
         //this.filhoAdicionado.next(filho);
     }
 
+    /**
+     * Seleciona os filhos de acordo com a seleção do pai (true/false)
+     * @returns 
+     */
     public selecionarFilhos = () => {
         if (!this.temFilhos() || !this.filhos) { return; }
         for (let i = 0; i < this.filhos.length; i++) {
@@ -46,10 +50,9 @@ export class DataTree {
     private selFilhos = (item: DataTree, selecao: boolean): void => {
         if (item === undefined || item === null) { return; }
         item.selecionado = selecao;
-        if (item.temFilhos() && item.filhos) {
-            for (let i = 0; i < item.filhos.length; i++) {
-                this.selFilhos(item.filhos[i], selecao);
-            }
+        if (!item.temFilhos() || item.filhos === undefined) { return; }
+        for (let i = 0; i < item.filhos.length; i++) {
+            this.selFilhos(item.filhos[i], selecao);
         }
     }
 

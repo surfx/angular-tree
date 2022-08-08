@@ -89,6 +89,12 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   }
   //#endregion
 
+  /**
+   * click label e checkbox
+   * @param item 
+   * @param selFilhos true: seleciona também os filhos - caso click checkbox
+   * @returns 
+   */
   public clickLabel(item: DataTree | undefined, selFilhos: boolean = false): void {
     if (item === undefined) { return; }
     item.aberto = true;
@@ -122,42 +128,69 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     if (this._mapSelecionados === undefined) { return undefined; }
     return [...this._mapSelecionados.values()];
   }
-
   //#endregion
 
-  //#region aux selecionaritem.selecionado
+  //#region aux selecionaritem
+  /**
+   * limpa a seleção de todos os itens
+   * @param limparMemoria limpa a memória dos itens selecionados
+   */
   public limparSelecao(limparMemoria: boolean = false): void {
-    this.selecionarDados(this.dados, false);
+    this.selecionarDadosAux(this.dados, false);
     if (limparMemoria) { this._mapSelecionados.clear(); }
   }
 
+  /**
+   * seleciona todos os itens
+   * @returns 
+   */
   public selecionarTodos(): void {
     if (!this.MultiplaSelecao) {
       console.info('Multipla seleção desabilitada');
       return;
     }
-    this.selecionarDados(this.dados, true);
+    this.selecionarDadosAux(this.dados, true);
   }
 
-  private selecionarDados(data: DataTree[] | undefined, selecionar: boolean): void {
+  /**
+   * Auxiliar para selecionar/deselecionar todos os dados
+   * @param data 
+   * @param selecionar 
+   * @returns 
+   */
+  private selecionarDadosAux(data: DataTree[] | undefined, selecionar: boolean): void {
     if (data === undefined || data.length <= 0) { return; }
     data.forEach(d => {
       if (d === undefined) { return; }
       d.selecionado = selecionar;
       this.atualizarSelecionadosMem(d);
       if (!d.temFilhos() || d.filhos === undefined) { return; }
-      this.selecionarDados(d.filhos, selecionar);
+      this.selecionarDadosAux(d.filhos, selecionar);
     });
   }
 
+  /**
+   * Seleciona os itens pelo id.
+   * Caso o componente não permita múltipla seleção, marca apenas o primeiro id
+   * @param ids 
+   * @param desmarcarDemais true: deixa selecionado apenas os ids informados. false: não interfere na seleção de itens já marcados
+   * @param selecionarFilhos true: seleciona todos os filhos dos itens dos ids informados
+   * @returns 
+   */
   public selecionarIds(ids: string[] | undefined, desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
-    if (ids === undefined) { return; }
     if (desmarcarDemais) { this.limparSelecao(true); }
     if (this.dados === undefined || ids === undefined || ids.length <= 0) { return; }
     if (!this.MultiplaSelecao) { ids = [ids[0]]; }
     this.selIdsAux(this.dados, ids, selecionarFilhos);
   }
 
+  /**
+   * Auxiliar da seleção por ids
+   * @param data 
+   * @param ids 
+   * @param selecionarFilhos 
+   * @returns 
+   */
   private selIdsAux(data: DataTree[] | undefined, ids: string[], selecionarFilhos: boolean = false): void {
     if (data === undefined || ids === undefined || ids.length <= 0) { return; }
     data.forEach(d => {
@@ -176,6 +209,11 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   //#endregion
 
   //#region close all nodes
+  /**
+   * Fecha ou expande todos os nodops
+   * @param expandir 
+   * @returns 
+   */
   public closeExpandAllNodes(expandir: boolean = false): void {
     if (this.dados === undefined) { return; }
     this.closeExpandAllNodesAux(this.dados, expandir);
@@ -191,6 +229,12 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   //#endregion
 
   //#region ajustes Ja Clicado
+  /**
+   * ajusta o parâmetro jaClicado para true se o item tiver filhos.
+   * Motivação: evitar chamar 'loadAndSetFilhos' para itens que já tenham filhos
+   * @param data 
+   * @returns 
+   */
   private ajustarLoadingJaClicado(data: DataTree[] | undefined): void {
     if (data === null || data === undefined || data.length <= 0) { return; }
     data.forEach(d => {
@@ -201,6 +245,10 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     });
   }
 
+  /**
+   * Marca o parâmetro jaClicado como true/false para todos os elementos
+   * @param jaClicado 
+   */
   public setAllJaClicado(jaClicado: boolean = true): void {
     this.setAllJaClicadoAux(this.dados, jaClicado);
   }
@@ -216,6 +264,11 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   //#endregion
 
   //#region Load Chields
+  /**
+   * adiciona os filhos para um determinado item
+   * @param item 
+   * @returns 
+   */
   private loadAndSetFilhos(item: DataTree | undefined): void {
     if (item === undefined || item.id === undefined || item.jaClicado) { return; }
     item.isLoading = true;
@@ -239,6 +292,12 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     });
   }
 
+  /**
+   * carrega e seta todos os filhos da árvore.
+   * Motivação: simular click em todos os nodos + load chields de forma recursiva.
+   * Tem mais caráter de teste do que funcionalidade para a aplicação real
+   * @returns 
+   */
   public loadAll(): void {
     if (this.dados === undefined) { return; }
     this.dados.forEach(d => {
@@ -285,6 +344,11 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   //#endregion
 
   //#region controle selecionados
+  /**
+   * controla o estado dos itens selecionados, '_mapSelecionados'
+   * @param item 
+   * @returns 
+   */
   private atualizarSelecionadosMem(item: DataTree | undefined): void {
     if (item === undefined || item.id === undefined) { return; }
     if (item.selecionado) {
