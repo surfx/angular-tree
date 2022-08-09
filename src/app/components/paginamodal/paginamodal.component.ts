@@ -41,9 +41,7 @@ export class PaginamodalComponent implements AfterViewInit {
   toggle() {
     this.mostrar = !this.mostrar;
     if (this.mostrar) {
-      this.loadInitialData(false)?.subscribe(_ => {
-        console.log('-- loaded');
-      });
+      this.loadInitialData(false);
       // if (this._ids !== undefined) {
       //   console.log(this._ids);
       //   this.treeSimple?.selecionarIds(this._ids);
@@ -70,9 +68,7 @@ export class PaginamodalComponent implements AfterViewInit {
       return undefined;
     }
     let obs$ = this.service.getInitialData();
-    if (obs$ === undefined) {
-      return undefined;
-    }
+    if (obs$ === undefined) { return undefined; }
 
     let rt: Subject<void> = new Subject<void>();
     let subscriber = obs$.subscribe(data => {
@@ -88,66 +84,34 @@ export class PaginamodalComponent implements AfterViewInit {
     return rt;
   }
 
-  // private loadInitialData(): void {
-  //   if (this._dataInicial !== undefined) {
-  //     this.delay(30).then(any => {
-  //       this.treeSimple?.setData(this._dataInicial);
-  //       this.treeSimple?.closeExpandAllNodes(true);
-  //     });
-  //     return;
-  //   }
-  //   let subscriber = this.data$?.subscribe(data => {
-  //     if (data === undefined) { return; }
-  //     this._dataInicial = data;
-  //     this.treeSimple?.setData(data);
-  //     subscriber?.unsubscribe();
-  //   });
-  // }
-
   //#region Filtrar Árvore
   private houveFiltro: boolean = false;
   public pesquisarArvore(event: any): void {
-    if (event === undefined) {
+    let valor = event === undefined ? undefined : event.target.value;
+    if (event === undefined || valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
+        let lid$ = this.loadInitialData(false);
+        if (lid$ === undefined) {
+          this.treeSimple?.closeExpandAllNodes(true);
+        } else {
+          let subscriber = lid$?.subscribe(_ => {
+            this.treeSimple?.closeExpandAllNodes(true);
+            subscriber?.unsubscribe();
+          });
+        }
         this.houveFiltro = false;
       }
-      this.treeSimple?.closeExpandAllNodes();
+      //this.treeSimple?.closeExpandAllNodes();
       return;
     }
-    let valor = event.target.value;
-    if (valor === undefined || valor.length <= 0) {
-      if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
-        this.houveFiltro = false;
-      }
-      this.treeSimple?.closeExpandAllNodes();
-      return;
-    }
+
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
-
-    // temp.subscribe(dados => {
-    //   if (dados === undefined) { return; }
-    //   this.treeSimple?.limparData();
-
-    //   this.houveFiltro = true;
-    //   this.treeSimple?.setData(dados, false);
-    //   this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
-    //   //this.treeSimple?.selecionarIds(idsS);
-
-    // });
 
     let subscriber = temp.subscribe(dados => {
       if (dados === undefined) { subscriber.unsubscribe(); return; }
       this.houveFiltro = true;
-      this.delay(30).then(any => {
+      this.delay(30).then(_ => {
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
       });
@@ -203,6 +167,15 @@ export class PaginamodalComponent implements AfterViewInit {
   private setInputText(texto: string = ''): void {
     if (this.inputFilterTree !== undefined) {
       this.inputFilterTree.nativeElement.value = texto;
+    }
+  }
+
+  public onclickitem(item: DataTree): void {
+    //console.log('onclickitem', item);
+    if (!this.houveFiltro && this.treeSimple !== undefined && this.treeSimple.dados !== undefined) {
+      // TODO: criar merge....
+      //this._dataInicial = this.treeSimple.dados;
+      //console.log('-atribuição');
     }
   }
 

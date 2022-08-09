@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
+import { ArvoreUtil } from 'src/app/util/arvore-util';
 
 @Component({
   selector: 'app-testes',
@@ -11,15 +11,8 @@ import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 })
 export class TestesComponent implements AfterViewInit, OnInit {
 
-  //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
-  @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
-  @ViewChild('input_filter') inputFilterTree: ElementRef | undefined;
-
-
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
-
-  private _dataInicial: DataTree[] | undefined; // memória
 
   constructor(
     private service: DadosArvoreService
@@ -32,201 +25,156 @@ export class TestesComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    let subscriber = this.data$?.subscribe(data => {
-      if (data === undefined) { return; }
-      this.treeSimple?.setData(data);
-      subscriber?.unsubscribe();
-    });
-  }
 
-  public getMapSelecionados() {
-    if (!this.treeSimple) { return; }
-    let sel = this.treeSimple.getMapSelecionados();
-    console.log('-----------------------');
-    sel?.forEach((v, k) => console.log(`${k}: ${v.texto}`));
-    console.log('-----------------------');
-  }
-
-  public getIdSelecionados() {
-    if (!this.treeSimple) { return; }
-    let sel = this.treeSimple.getIdSelecionados();
-    console.log('-----------------------');
-    sel?.forEach(v => console.log(`${v}`));
-    console.log('-----------------------');
-  }
-
-  // para o exemplo não vou retornar os subfilhos
-  public loadFilhos(id: string): Observable<DataTree[] | undefined> | undefined {
-    return this.service.loadFilhos(id);
-  }
-
-  public limparSelecao(limparMemoria: boolean): void {
-    this.treeSimple?.limparSelecao(limparMemoria);
-  }
-
-  public selecionarTodos(): void {
-    this.treeSimple?.selecionarTodos();
-  }
-
-  public selecionarIds(): void {
-    let ids: string[] = ['1', '1.2', '3.3', '3.1'];
-    //this.treeSimple?.limparSelecao(true);
-    this.treeSimple?.selecionarIds(ids, true, false);
-  }
-
-  public limparData(limparMemoria: boolean): void {
-    this._dataInicial = undefined;
-    this.treeSimple?.limparData();
-    this.limparSelecao(limparMemoria);
-
-    this.setInputText('');
-  }
-
-  public loadAll(): void {
-    //let idsSelecionados = this.treeSimple?.getIdSelecionados();
-
-    if (this.alldata === undefined || this.alldata === null || this.alldata.length <= 0) {
-      let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
-    }
-    this.treeSimple?.setData(this.alldata, true);
-    //this.treeSimple?.selecionarIds(idsSelecionados);
-
-    this.setInputText('');
-  }
-
-  public loadInitialData(): Subject<void> | undefined {
-    if (this.treeSimple === undefined) { return undefined; }
-    //let idsSelecionados = this.treeSimple.getIdSelecionados();
-
-    this.limparData(false);
-    if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
-      this.delay(30).then(any => {
-        this.treeSimple?.setData(this._dataInicial);
-        this.treeSimple?.closeExpandAllNodes(true);
-
-        //this.treeSimple?.selecionarIds(idsSelecionados);
-      });
-      return undefined;
-    }
-    let obs$ = this.service.getInitialData();
-    if (obs$ === undefined) { return undefined; }
-
-    let rt: Subject<void> = new Subject<void>();
-    let subscriber = obs$.subscribe(data => {
-      if (data === undefined) { return; }
-      this.treeSimple?.setData(data, true);
-      this._dataInicial = data;
-
-      //this.treeSimple?.selecionarIds(idsSelecionados);
-
-      rt.next();
-      subscriber.unsubscribe();
-    });
-    return rt;
-  }
-
-  // public loadInitialData(): void {
-  //   let obs$ = this.service.getInidadostialData();
-  //   if (obs$ === undefined) { return; }
-  //   obs$.subscribe(data => {
-  //     if (data === undefined) { return; }
-  //     this.treeSimple?.setData(data, true);
-  //   });
-  // }
-
-  //#region Filtrar Árvore
-  private houveFiltro: boolean = false;
-  public pesquisarArvore(event: any): void {
-    if (event === undefined) {
-      if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
-        this.houveFiltro = false;
-      }
-      this.treeSimple?.closeExpandAllNodes();
-      return;
-    }
-    let valor = event.target.value;
-    if (valor === undefined || valor.length <= 0) {
-      if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
-        this.houveFiltro = false;
-      }
-      this.treeSimple?.closeExpandAllNodes();
-      return;
-    }
-    let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
-    if (temp === undefined) { return; }
-
-    // temp.subscribe(dados => {
-    //   if (dados === undefined) { return; }
-    //   this.treeSimple?.limparData();
-
-    //   this.houveFiltro = true;
-    //   this.treeSimple?.setData(dados, false);
-    //   this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
-    //   //this.treeSimple?.selecionarIds(idsS);
-
-    // });
-
-    let subscriber = temp.subscribe(dados => {
-      if (dados === undefined) { subscriber.unsubscribe(); return; }
-      this.houveFiltro = true;
-      this.delay(30).then(any => {
-        this.treeSimple?.setData(dados, false);
-        this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
-      });
-      subscriber.unsubscribe();
-    });
-  }
-  //#endregion
-
-  public loadAllTree(): void {
-    // o load all tree precisa que a árvore possua dados iniciais
-    let subscriber = this.loadInitialData()?.subscribe(_ => {
-      if (this.treeSimple !== undefined) {
-        this.treeSimple?.loadAll();
-      }
-      subscriber?.unsubscribe();
-    });
-    // this.delay(200).then(any => {
-    //   this.treeSimple?.loadAll();
-    // });
-  }
-
-  public collapseTree(): void {
-    this.treeSimple?.closeExpandAllNodes();
-  }
-
-  public expandTree(): void {
-    this.treeSimple?.closeExpandAllNodes(true);
-  }
-
-  //----
-  public getSelecionados(): string[] | undefined {
-    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) { return undefined; }
-    let map: Map<string, DataTree> | undefined = this.treeSimple.getMapSelecionados();
-    if (map === undefined) { return undefined; }
-    return [...map.values()].map(item => item.toString());
-  }
-
-  private setInputText(texto: string = ''): void {
-    if (this.inputFilterTree !== undefined) {
-      this.inputFilterTree.nativeElement.value = texto;
-    }
-  }
-
-  //----
-  public onclickitem(item: DataTree): void {
-    console.log('onclickitem', item);
   }
 
   //this.delay(300).then(any => {});
   async delay(ms: number) { await new Promise<void>(resolve => setTimeout(() => resolve(), ms)); }
+
+  //---------------------
+
+  private getData1(): DataTree[] {
+    let rt: DataTree[] = [];
+
+    let item1: DataTree = new DataTree("1", "item 1");
+    let item11: DataTree = new DataTree("1.1", "item 1.1");
+    let item2: DataTree = new DataTree("2", "item 2");
+    let item21: DataTree = new DataTree("2.1", "item 2.1");
+    item1.addFilho(item11, false);
+    item2.addFilho(item21, false);
+
+    let item111: DataTree = new DataTree("1.1.1", "item 1.1.1");
+    item11.addFilho(item111, false);
+
+    let item4: DataTree = new DataTree("4", "item 4");
+
+    rt.push(item1);
+    rt.push(item2);
+    rt.push(item4);
+    return rt;
+  }
+
+  private getData2(): DataTree[] {
+    let rt: DataTree[] = [];
+
+    let item1: DataTree = new DataTree("1", "item 1");
+    let item11: DataTree = new DataTree("1.1", "item 1.1");
+
+    let item2: DataTree = new DataTree("2", "item 2");
+    let item21: DataTree = new DataTree("2.1", "item 2.1");
+    let item22: DataTree = new DataTree("2.2", "item 2.2");
+    let item221: DataTree = new DataTree("2.2.1", "item 2.2.1");
+    let item222: DataTree = new DataTree("2.2.2", "item 2.2.2");
+
+    let item3: DataTree = new DataTree("3", "item 3");
+
+    item22.addFilho(item221, false);
+    item22.addFilho(item222, false);
+
+    item1.addFilho(item11, false);
+    item2.addFilho(item21, false);
+    item2.addFilho(item22, false);
+
+    rt.push(item1);
+    rt.push(item2);
+    rt.push(item3);
+    return rt;
+  }
+
+  public teste1(): void {
+    let dt1 = this.getData1();
+    let dt2 = this.getData2();
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
+    ArvoreUtil.printDt(dt2);
+    console.log('-------------------');
+
+
+    // let m: Map<string, DataTree> | undefined = this.toMapDt(dt2);
+    // if (m === undefined) { return; }
+    // m.forEach((v, k) => { console.log(k, v); });
+    // console.log('-------------------');
+
+    //let dt3: DataTree[] | undefined = this.mergeDt(dt1, m);
+    // this.merge2(dtTestesComponent1, dt2);
+    // this.printDt(dt1);
+
+    // let aux: DataTree[] | undefined = this.mteste(dt1, dt2);
+    // console.log(aux);
+
+    // let vid1 = [...dt1.map(item => item.id)];
+    // let vid2 = [...dt2.map(item => item.id)];
+    // let dt3 = dt2.filter(v => vid1.indexOf(v.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
+    // let dt4 = dt1.filter(v => vid2.indexOf(v.id) < 0); // itens que existem no vetor 1, mas não no vetor 2
+    // console.log(dt3);
+    // console.log(dt4);
+
+    let teste = ArvoreUtil.mergeDt(dt1, dt2);
+    console.log(teste);
+    ArvoreUtil.printDt(teste);
+
+  }
+
+
+  public teste2(): void {
+
+    let a1: DataTree[] = [
+      new DataTree('1', 'item 1'),
+      new DataTree('2', 'item 2'),
+      new DataTree('4', 'item 4')
+    ];
+    let a2: DataTree[] = [
+      new DataTree('1', 'item 1'),
+      new DataTree('2', 'item 2'),
+      new DataTree('3', 'item 3')
+    ];
+
+    // let a3 = [...a1, ...a2];
+    // let a4 = a1.concat(a2);
+    // console.log(a3);
+    // console.log(a4);
+
+    //----------------------
+    // const mergeById = (array1: DataTree[], array2: DataTree[]) =>
+    //   array1.map(itm => ({
+    //     ...array2.find((item) => (item.id === itm.id) && item),
+    //     ...itm
+    //   }));
+    // let result = mergeById(a1, a2);
+    // console.log(result);
+
+    // const merged = a2.reduce((arr, item) => {
+    //   arr.push(item);
+    //   return arr;
+    // }, a1);
+    // console.log(merged);
+    //----------------------
+
+    let teste = ArvoreUtil.mergeDt(a1, a2);
+    console.log(teste);
+  }
+
+  public teste3(): void {
+    let au: ArvoreUtil = new ArvoreUtil();
+    let a1 = au.getArvoreRandomica(3);
+    let a2 = au.getArvoreRandomica(2);
+
+    console.log(a1);
+    ArvoreUtil.printDt(a1);
+    console.log('----------------------------');
+    console.log(a2);
+    ArvoreUtil.printDt(a2);
+    console.log('----------------------------');
+
+    let teste = ArvoreUtil.mergeDt(a1, a2);
+    console.log(teste);
+    ArvoreUtil.printDt(teste);
+  }
+
+
+
+
+
+
 
 }
