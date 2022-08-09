@@ -45,6 +45,8 @@ export class TestesComponent implements AfterViewInit, OnInit {
 
     let item111: DataTree = new DataTree("1.1.1", "item 1.1.1");
     item11.addFilho(item111, false);
+    let item11a: DataTree = new DataTree("1.1.a", "item 1.1.a");
+    item11.addFilho(item11a, false);
 
     let item4: DataTree = new DataTree("4", "item 4");
 
@@ -172,9 +174,67 @@ export class TestesComponent implements AfterViewInit, OnInit {
   }
 
 
+  public teste4(): void {
+    let dt1 = this.getData1();
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
 
+    let itemAddFilho: DataTree = new DataTree("1.1", "item 1.1");
+    for (let i = 0; i < 3; i++) {
+      itemAddFilho.addFilho(new DataTree("1.1." + i, "item 1.1." + i));
+    }
+    ArvoreUtil.printDt([itemAddFilho]);
+    console.log('-------------------');
 
+    this.atualizarFilhos(dt1, itemAddFilho);
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
 
+    //--- mais update de filhos
+    let item11a: DataTree = new DataTree("1.1.a", "item 1.1.a");
+    for (let i = 0; i < 5; i++) {
+      item11a.addFilho(new DataTree("1.1.a." + i, "1.1.a." + i));
+    }
+    this.atualizarFilhos(dt1, item11a);
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
+
+    //--- mais update de filhos
+    //1.1.a.2
+    let item11a2: DataTree = new DataTree("1.1.a.2", "item 1.1.a.2");
+    for (let i = 0; i < 5; i++) {
+      item11a2.addFilho(new DataTree("1.1.a.2." + i, "1.1.a.2." + i));
+    }
+    this.atualizarFilhos(dt1, item11a2);
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
+
+  }
+
+  /**
+     * atualiza a estrutura de árvore caso algum filho tenha sido alterado
+     * @param dados 
+     * @param itemAtualizado 
+     * @returns 
+     */
+  private atualizarFilhos(dados: DataTree[] | undefined, itemAtualizado: DataTree | undefined): boolean {
+    if (dados === undefined || itemAtualizado === undefined) { return false; }
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].id === itemAtualizado.id) {
+        itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
+        dados[i] = itemAtualizado;
+        return true;
+      }
+    }
+    // busca filhos
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
+      if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 
 }

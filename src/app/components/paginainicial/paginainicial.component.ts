@@ -221,10 +221,11 @@ export class PaginainicialComponent implements AfterViewInit {
       this._dataInicial = this.treeSimple.dados;
       return;
     }
-    // TODO: como eu tenho o item que foi alterado (filhos adicionados - item), posso procurar o mesmo na árvore e atualizar
-    // pontualmente o mesmo --> a ser feito
     console.log('-- merge data');
     this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
+
+    // console.log('-- atualizarFilhos');
+    // ArvoreUtil.atualizarFilhos(this._dataInicial, item);
   }
 
   //this.delay(300).then(any => {});
