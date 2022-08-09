@@ -264,7 +264,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   }
   //#endregion
 
-  //#region Load Chields
+  //#region Load children
   /**
    * adiciona os filhos para um determinado item
    * @param item 
@@ -296,25 +296,25 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
   /**
    * carrega e seta todos os filhos da árvore.
-   * Motivação: simular click em todos os nodos + load chields de forma recursiva.
+   * Motivação: simular click em todos os nodos + load children de forma recursiva.
    * Tem mais caráter de teste do que funcionalidade para a aplicação real
    * @returns 
    */
   public loadAll(): void {
     if (this.dados === undefined) { return; }
     this.dados.forEach(d => {
-      this.loadChieldsAux(d);
+      this.loadChildrenAux(d);
     });
   }
 
-  private loadChieldsAux(item: DataTree | undefined): void {
+  private loadChildrenAux(item: DataTree | undefined): void {
     if (item === undefined || item.id === undefined || item.jaClicado) { return; }
     item.isLoading = true;
     item.jaClicado = true;
     item.filhos = []; // evitar que filhos sejam re-adds
 
     // item.filhoAdicionado.subscribe(fadd => {
-    //   this.loadChieldsAux(fadd);
+    //   this.loadchildrenAux(fadd);
     // });
 
     let filhos$: Observable<DataTree[] | undefined> | undefined = this.service.loadFilhos(item.id);
@@ -329,10 +329,10 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       filhosData.forEach(f => {
         item.addFilho(f, false);
 
-        this.loadChieldsAux(f);
+        this.loadChildrenAux(f);
 
         // f.filhoAdicionado.subscribe(fadd => {
-        //   this.loadChieldsAux(fadd);
+        //   this.loadchildrenAux(fadd);
         // });
 
         let idsSelecionados = this.getIdSelecionados();

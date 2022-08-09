@@ -24,11 +24,11 @@ export class DadosArvoreService {
   private getJsonDataTeste0() {
     return [
       {
-        id: '1', text: 'item 1', chields: [
+        id: '1', text: 'item 1', children: [
           {
-            id: '1.1', text: 'item 1.1', chields: [
+            id: '1.1', text: 'item 1.1', children: [
               { id: '2.1', text: 'item 2.1' },
-              { id: '2.2', text: 'item 2.2', chields: [
+              { id: '2.2', text: 'item 2.2', children: [
                 { id: '3.2.1.1', text: 'item 3.2.1.1' },
                 { id: '3.2.2.1', text: 'item 3.2.2.1' }
               ] }
@@ -44,25 +44,25 @@ export class DadosArvoreService {
   private getJsonDataTeste1() {
     return [
       {
-        id: '1', text: 'item 1', chields: [
+        id: '1', text: 'item 1', children: [
           { id: '1.1', text: 'item 1.1' },
           { id: '1.2', text: 'item 1.2' },
           { id: '1.3', text: 'item 1.3' }
         ]
       },
       {
-        id: '2', text: 'item 2', chields: [
+        id: '2', text: 'item 2', children: [
           { id: '2.1', text: 'item 2.1' },
           { id: '2.2', text: 'item 2.2' }
         ]
       },
       {
-        id: '3', text: 'item 3', chields: [
+        id: '3', text: 'item 3', children: [
           { id: '3.1', text: 'item 3.1' },
           {
-            id: '3.2', text: 'item 3.2', chields: [
+            id: '3.2', text: 'item 3.2', children: [
               {
-                id: '3.2.1', text: 'item 3.2.1', chields: [
+                id: '3.2.1', text: 'item 3.2.1', children: [
                   { id: '3.2.1.1', text: 'item 3.2.1.1' },
                   { id: '3.2.2.1', text: 'item 3.2.2.1' }
                 ]
@@ -80,13 +80,13 @@ export class DadosArvoreService {
   private getJsonDataTeste2() {
     return [
       {
-        id: '1', text: 'GOVERNOS ESTADUAIS', chields: [
+        id: '1', text: 'GOVERNOS ESTADUAIS', children: [
           {
-            id: '1.1', text: 'Governo do Estado de Acre - AC', chields: [
+            id: '1.1', text: 'Governo do Estado de Acre - AC', children: [
               {
-                id: '1.1.1', text: 'Secretaria de Segurança Pública do Acre', chields: [
+                id: '1.1.1', text: 'Secretaria de Segurança Pública do Acre', children: [
                   {
-                    id: '1.1.1.1', text: 'Polícia Militar do Acre', chields: [
+                    id: '1.1.1.1', text: 'Polícia Militar do Acre', children: [
                       { id: '1.1.1.1.1', text: 'TESTE' }
                     ]
                   }
@@ -105,22 +105,22 @@ export class DadosArvoreService {
         ]
       },
       {
-        id: '2', text: 'Governo do Estado de Alagoas', chields: [
+        id: '2', text: 'Governo do Estado de Alagoas', children: [
           {
-            id: '2.1', text: 'Secretaria de Segurança Pública da Defesa Social de Alagoas', chields: [
+            id: '2.1', text: 'Secretaria de Segurança Pública da Defesa Social de Alagoas', children: [
               { id: '2.1.1', text: 'Polícia Militar de Alagoas' },
               { id: '2.1.2', text: 'Corpo de Bombeiros Militar de Alagoas' },
               { id: '2.1.3', text: 'Polícia Civil de Alagoas' },
             ]
           },
           {
-            id: '2.2', text: 'Governo do Estado de Amapá', chields: [
+            id: '2.2', text: 'Governo do Estado de Amapá', children: [
               {
-                id: '2.2.1', text: 'Secretaria de Segurança Pública da Justiça e Segurança Pública do Amapá', chields: [
+                id: '2.2.1', text: 'Secretaria de Segurança Pública da Justiça e Segurança Pública do Amapá', children: [
                   { id: '2.2.1.1', text: 'Polícia Militar do Amapá' },
                   { id: '2.2.1.2', text: 'Corpo de Bombeiros Militar do Amapá' },
                   {
-                    id: '2.2.1.3', text: 'Polícia Civil do Amapá', chields: [
+                    id: '2.2.1.3', text: 'Polícia Civil do Amapá', children: [
                       { id: '2.2.1.3.1', text: '1 DP' },
                       { id: '2.2.1.3.2', text: '2 DP' },
                       { id: '2.2.1.3.3', text: 'Distrito Policial - Intbo - Teste' }
@@ -133,31 +133,31 @@ export class DadosArvoreService {
         ]
       },
       {
-        id: '3', text: 'Governo do Estado de Amazonas', chields: [
+        id: '3', text: 'Governo do Estado de Amazonas', children: [
           {
-            id: '3.1', text: 'Secretaria de Segurança Pública do Amazonas', chields: [
+            id: '3.1', text: 'Secretaria de Segurança Pública do Amazonas', children: [
               { id: '3.1.1', text: 'Polícia Militar do Amazonas' },
               { id: '3.1.2', text: 'Corpo de Bombeiros Militar do Amazonas' },
               {
-                id: '3.1.3', text: 'Polícia Civil do Amazonas', chields: [
+                id: '3.1.3', text: 'Polícia Civil do Amazonas', children: [
                   { id: '3.1.3.1', text: '1º Distrito Policial - Manaus' }
                 ]
               }
             ]
           },
           {
-            id: '3.2', text: 'Governo do Estado de Bahia', chields: [
+            id: '3.2', text: 'Governo do Estado de Bahia', children: [
               {
-                id: '3.2.1', text: 'Secretaria de Segurança Pública de Bahia', chields: [
+                id: '3.2.1', text: 'Secretaria de Segurança Pública de Bahia', children: [
                   { id: '3.2.1.1', text: 'Polícia Militar da Bahia' },
                   { id: '3.2.1.2', text: 'Corpo de Bombeiros Militar da Bahia' },
                   { id: '3.2.1.3', text: 'Polícia Civil da Bahia' }
                 ]
               },
               {
-                id: '3.2.2', text: 'Governo do Estado de Ceará', chields: [
+                id: '3.2.2', text: 'Governo do Estado de Ceará', children: [
                   {
-                    id: '3.2.2.1', text: 'Secretaria de Segurança Pública da e Defesa Social do Ceará', chields: [
+                    id: '3.2.2.1', text: 'Secretaria de Segurança Pública da e Defesa Social do Ceará', children: [
                       { id: '3.2.2.1.1', text: 'Polícia Militar do Ceará' },
                       { id: '3.2.2.1.2', text: 'Corpo de Bombeiros Militar do Ceará' },
                       { id: '3.2.2.1.3', text: 'Polícia Civil do Ceará' }
@@ -168,17 +168,17 @@ export class DadosArvoreService {
             ]
           },
           {
-            id: '3.3', text: 'Governo do Distrito Federal', chields: [
+            id: '3.3', text: 'Governo do Distrito Federal', children: [
               {
-                id: '3.3.1', text: 'Secretaria de Estado de Segurança Pública e Defesa Social do Distrito Federal', chields: [
+                id: '3.3.1', text: 'Secretaria de Estado de Segurança Pública e Defesa Social do Distrito Federal', children: [
                   {
-                    id: '3.3.1.1', text: 'Polícia Militar do Distrito Federal', chields: [
+                    id: '3.3.1.1', text: 'Polícia Militar do Distrito Federal', children: [
                       { id: '3.3.1.1.1', text: 'Guarda Municipal' }
                     ]
                   },
                   { id: '3.3.1.2', text: 'Corpo de Bombeiros Militar do Distrito Federal' },
                   {
-                    id: '3.3.1.3', text: 'Polícia Civil do Distrito Federal', chields: [
+                    id: '3.3.1.3', text: 'Polícia Civil do Distrito Federal', children: [
                       { id: '3.3.1.3.1', text: '1º Distrito Policial' }
                     ]
                   },
@@ -189,9 +189,9 @@ export class DadosArvoreService {
             ]
           },
           {
-            id: '3.4', text: 'Governo do Estado de Espírito Santo', chields: [
+            id: '3.4', text: 'Governo do Estado de Espírito Santo', children: [
               {
-                id: '3.4.1', text: 'Secretaria de Segurança Pública e Defesa Social do Espírito Santo', chields: [
+                id: '3.4.1', text: 'Secretaria de Segurança Pública e Defesa Social do Espírito Santo', children: [
                   { id: '3.4.1.1', text: 'Polícia Militar do Espírito Santo' },
                   { id: '3.4.1.2', text: 'Corpo de Bombeiros Militar do Espírito Santo' },
                   { id: '3.4.1.3', text: 'Polícia Civil do Espírito Santo' }

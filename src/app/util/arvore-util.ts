@@ -53,11 +53,11 @@ export class ArvoreUtil {
 
         let numNodos = Util.getRandomInt(3, 15);
         for (let i = 0; i < numNodos; i++) {
-            let dtTree: any = { id: this.getNextId(), text: Util.getRandomText(30, this._possible), chields: undefined };
+            let dtTree: any = { id: this.getNextId(), text: Util.getRandomText(30, this._possible), children: undefined };
             if (!Util.getRandomBoolean()) { rt.push(dtTree); continue; }
             let filhosAux = this.gerarArvoreJsonRandomica(passo + 1, maxStack);
             if (filhosAux !== undefined && filhosAux.length > 0) {
-                dtTree.chields = filhosAux;
+                dtTree.children = filhosAux;
             }
             rt.push(dtTree);
         }
@@ -77,11 +77,11 @@ export class ArvoreUtil {
             let jaux = json[i];
             if (!ok(jaux) || !ok(jaux.id) || !ok(jaux.text)) { continue; }
             let d: DataTree = new DataTree(jaux.id + '', jaux.text);
-            if (!ok(jaux.chields)) {
+            if (!ok(jaux.children)) {
                 rt.push(d);
                 continue;
             }
-            let aux = this.convertJsonToDataTree(jaux.chields);
+            let aux = this.convertJsonToDataTree(jaux.children);
             if (ok(aux) && aux !== undefined && aux?.length > 0) {
                 for (let j = 0; j < aux.length; j++) {
                     d.addFilho(aux[j], false);
