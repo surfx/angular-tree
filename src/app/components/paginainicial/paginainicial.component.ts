@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
+import { ArvoreUtil } from 'src/app/util/arvore-util';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
@@ -75,8 +76,8 @@ export class PaginainicialComponent implements AfterViewInit {
     this.treeSimple?.selecionarIds(ids, true, false);
   }
 
-  public limparData(limparMemoria: boolean): void {
-    this._dataInicial = undefined;
+  public limparData(limparMemoria: boolean, limparDataInicial: boolean = true): void {
+    if (limparDataInicial) { this._dataInicial = undefined; }
     this.treeSimple?.limparData();
     this.limparSelecao(limparMemoria);
 
@@ -95,11 +96,11 @@ export class PaginainicialComponent implements AfterViewInit {
     this.setInputText('');
   }
 
-  public loadInitialData(): Subject<void> | undefined {
+  public loadInitialData(limparDataInicial: boolean = true): Subject<void> | undefined {
     if (this.treeSimple === undefined) { return undefined; }
     //let idsSelecionados = this.treeSimple.getIdSelecionados();
 
-    this.limparData(false);
+    this.limparData(false, limparDataInicial);
     if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
       this.delay(30).then(any => {
         this.treeSimple?.setData(this._dataInicial);
@@ -138,47 +139,31 @@ export class PaginainicialComponent implements AfterViewInit {
   //#region Filtrar Árvore
   private houveFiltro: boolean = false;
   public pesquisarArvore(event: any): void {
-    if (event === undefined) {
+    let valor = event === undefined ? undefined : event.target.value;
+    if (event === undefined || valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
+        let lid$ = this.loadInitialData(false);
+        if (lid$ === undefined) {
+          this.treeSimple?.closeExpandAllNodes(true);
+        } else {
+          let subscriber = lid$?.subscribe(_ => {
+            this.treeSimple?.closeExpandAllNodes(true);
+            subscriber?.unsubscribe();
+          });
+        }
         this.houveFiltro = false;
       }
-      this.treeSimple?.closeExpandAllNodes();
+      //this.treeSimple?.closeExpandAllNodes();
       return;
     }
-    let valor = event.target.value;
-    if (valor === undefined || valor.length <= 0) {
-      if (this.houveFiltro) {
-        let subscriber = this.loadInitialData()?.subscribe(_ => {
-          this.treeSimple?.closeExpandAllNodes();
-          subscriber?.unsubscribe();
-        });
-        this.houveFiltro = false;
-      }
-      this.treeSimple?.closeExpandAllNodes();
-      return;
-    }
+
     let temp: Observable<DataTree[] | undefined> | undefined = this.service.filtrarData(valor);
     if (temp === undefined) { return; }
-
-    // temp.subscribe(dados => {
-    //   if (dados === undefined) { return; }
-    //   this.treeSimple?.limparData();
-
-    //   this.houveFiltro = true;
-    //   this.treeSimple?.setData(dados, false);
-    //   this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
-    //   //this.treeSimple?.selecionarIds(idsS);
-
-    // });
 
     let subscriber = temp.subscribe(dados => {
       if (dados === undefined) { subscriber.unsubscribe(); return; }
       this.houveFiltro = true;
-      this.delay(30).then(any => {
+      this.delay(30).then(_ => {
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
       });
@@ -225,6 +210,21 @@ export class PaginainicialComponent implements AfterViewInit {
   //----
   public onclickitem(item: DataTree): void {
     console.log('onclickitem', item);
+  }
+
+  public eventfilhoadd(item: DataTree): void {
+    //console.log('eventfilhoadd', item);
+    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) {
+      return;
+    }
+    if (this._dataInicial === undefined) {
+      this._dataInicial = this.treeSimple.dados;
+      return;
+    }
+    // TODO: como eu tenho o item que foi alterado (filhos adicionados - item), posso procurar o mesmo na árvore e atualizar
+    // pontualmente o mesmo --> a ser feito
+    console.log('-- merge data');
+    this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
   }
 
   //this.delay(300).then(any => {});

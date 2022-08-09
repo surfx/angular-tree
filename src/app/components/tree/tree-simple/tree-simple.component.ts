@@ -13,6 +13,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
   @Input('MultiplaSelecao') MultiplaSelecao: boolean | undefined;
   @Output('ClickItem') ClickItem: EventEmitter<DataTree> = new EventEmitter<DataTree>();
+  @Output('EventFilhoAdd') EventFilhoAdd: EventEmitter<DataTree> = new EventEmitter<DataTree>();
 
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
@@ -289,6 +290,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       });
       item.aberto = true;
       subscriber.unsubscribe();
+      if (this.EventFilhoAdd !== undefined) { this.EventFilhoAdd.emit(item); }
     });
   }
 
@@ -339,6 +341,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
       });
       item.aberto = true;
       subscriber.unsubscribe();
+      if (this.EventFilhoAdd !== undefined) { this.EventFilhoAdd.emit(item); }
     });
   }
   //#endregion

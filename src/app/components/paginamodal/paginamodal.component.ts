@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
+import { ArvoreUtil } from 'src/app/util/arvore-util';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
@@ -172,11 +173,27 @@ export class PaginamodalComponent implements AfterViewInit {
 
   public onclickitem(item: DataTree): void {
     //console.log('onclickitem', item);
+    //&& item !== undefined && item.temFilhos()
     if (!this.houveFiltro && this.treeSimple !== undefined && this.treeSimple.dados !== undefined) {
-      // TODO: criar merge....
       //this._dataInicial = this.treeSimple.dados;
       //console.log('-atribuição');
+      //this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
     }
+  }
+
+  public eventfilhoadd(item: DataTree): void {
+    //console.log('eventfilhoadd', item);
+    if (this.treeSimple === undefined || this.treeSimple.dados === undefined) {
+      return;
+    }
+    if (this._dataInicial === undefined) {
+      this._dataInicial = this.treeSimple.dados;
+      return;
+    }
+    // TODO: como eu tenho o item que foi alterado (filhos adicionados - item), posso procurar o mesmo na árvore e atualizar
+    // pontualmente o mesmo --> a ser feito
+    console.log('-- merge data');
+    this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
   }
 
   //this.delay(300).then(any => {});
