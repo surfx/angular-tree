@@ -212,7 +212,7 @@ export class TestesComponent implements AfterViewInit, OnInit {
   }
 
   /**
-     * atualiza a estrutura de árvore caso algum filho tenha sido alterado
+     * atualiza a estrutura de árvore caso algum filho tenha sido alterado - nok
      * @param dados 
      * @param itemAtualizado 
      * @returns 
@@ -235,6 +235,18 @@ export class TestesComponent implements AfterViewInit, OnInit {
     }
     return false;
   }
+
+  public teste5(): void {
+    // busca árvore recursiva
+    ArvoreUtil.printDt(this.alldata);
+    console.log('-------------------');
+
+    let filtro: string = "";
+    let a1 = ArvoreUtil.findSubTree(this.alldata, filtro);
+    ArvoreUtil.printDt(a1);
+  }
+
+
 
 
 }

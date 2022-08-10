@@ -110,8 +110,12 @@ export class PaginamodalComponent implements AfterViewInit {
     if (temp === undefined) { return; }
 
     let subscriber = temp.subscribe(dados => {
-      if (dados === undefined) { subscriber.unsubscribe(); return; }
       this.houveFiltro = true;
+      if (dados === undefined) {
+        this.treeSimple?.limparData();
+        subscriber.unsubscribe();
+        return;
+      }
       this.delay(30).then(_ => {
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro

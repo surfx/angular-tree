@@ -28,10 +28,12 @@ export class DadosArvoreService {
           {
             id: '1.1', text: 'item 1.1', children: [
               { id: '2.1', text: 'item 2.1' },
-              { id: '2.2', text: 'item 2.2', children: [
-                { id: '3.2.1.1', text: 'item 3.2.1.1' },
-                { id: '3.2.2.1', text: 'item 3.2.2.1' }
-              ] }
+              {
+                id: '2.2', text: 'item 2.2', children: [
+                  { id: '3.2.1.1', text: 'item 3.2.1.1' },
+                  { id: '3.2.2.1', text: 'item 3.2.2.1' }
+                ]
+              }
             ]
           },
           { id: '1.2', text: 'item 1.2' },
@@ -279,61 +281,63 @@ export class DadosArvoreService {
   // --------------- filtrarData ---------------
   public filtrarData(filtro: string): Observable<DataTree[] | undefined> | undefined {
     // TODO: corrigir para usar o Observable
-    let rt = this.filtrarDataAux(ArvoreUtil.convertJsonToDataTree(this.jsonData), filtro);
+    let rt = ArvoreUtil.findSubTree(ArvoreUtil.convertJsonToDataTree(this.jsonData), filtro);
+    //let rt = this.findSubTree(ArvoreUtil.convertJsonToDataTree(this.jsonData), filtro);
     return this._delayService <= 0 ? of(rt) : of(rt).pipe(delay(this._delayService));
   }
 
-  private filtrarDataAux(data: DataTree[] | undefined, filtro: string): DataTree[] | undefined {
-    if (data === null || data === undefined || !data || data.length <= 0) { return undefined; }
-    if (filtro === null || filtro === undefined || filtro.length <= 0) { return data; }
-    let rt: DataTree[] = [];
-    filtro = filtro.trim().toLowerCase();
+  // backup - old code para filtrar árvores - not efficient
+  // private findSubTree(data: DataTree[] | undefined, filtro: string): DataTree[] | undefined {
+  //   if (data === null || data === undefined || !data || data.length <= 0) { return undefined; }
+  //   if (filtro === null || filtro === undefined || filtro.length <= 0) { return data; }
+  //   let rt: DataTree[] = [];
+  //   filtro = filtro.trim().toLowerCase();
 
-    data.forEach(d => {
-      if (d === null || d === undefined) { return; }
-      // se o próprio elemento não tiver ou filtro, ou algum de seus filhos
-      // this.contemFiltro - se algum filho tiver o filtro
-      if (d.texto.trim().toLowerCase().indexOf(filtro) < 0 && !this.contemFiltro(d.filhos, filtro)) {
-        return;
-      }
-      let addDados: DataTree = new DataTree(d.id, d.texto);
-      // addDados.jaClicado = d.jaClicado;
-      // verifica cada filho de 'd', para ver se ele deve ser adicionado ao retorno
-      if (d.temFilhos() && d.filhos) {
-        let auxFilhos: DataTree[] | undefined = this.filtrarDataAux(d.filhos, filtro);
-        if (auxFilhos !== undefined) {
-          auxFilhos.forEach(filho => {
-            if (addDados.filhos === undefined || addDados.filhos === null) {
-              addDados.filhos = [];
-            }
-            addDados.filhos.push(filho);
-          });
-        }
-      }
-      rt.push(addDados);
+  //   data.forEach(d => {
+  //     if (d === null || d === undefined) { return; }
+  //     // se o próprio elemento não tiver ou filtro, ou algum de seus filhos
+  //     // this.contemFiltro - se algum filho tiver o filtro
+  //     if (d.texto.trim().toLowerCase().indexOf(filtro) < 0 && !this.contemFiltro(d.filhos, filtro)) {
+  //       return;
+  //     }
+  //     let addDados: DataTree = new DataTree(d.id, d.texto);
+  //     // addDados.jaClicado = d.jaClicado;
+  //     // verifica cada filho de 'd', para ver se ele deve ser adicionado ao retorno
+  //     if (d.temFilhos() && d.filhos) {
+  //       let auxFilhos: DataTree[] | undefined = this.findSubTree(d.filhos, filtro);
+  //       if (auxFilhos !== undefined) {
+  //         auxFilhos.forEach(filho => {
+  //           if (addDados.filhos === undefined || addDados.filhos === null) {
+  //             addDados.filhos = [];
+  //           }
+  //           addDados.filhos.push(filho);
+  //         });
+  //       }
+  //     }
+  //     rt.push(addDados);
 
-    });
+  //   });
 
-    return rt;
-  }
+  //   return rt;
+  // }
 
 
-  private contemFiltro(data: DataTree[] | undefined, filtro: string): boolean {
-    if (data === null || data === undefined || !data || data.length <= 0) { return false; }
-    if (filtro === null || filtro === undefined || filtro.length <= 0) { return false; }
-    filtro = filtro.trim().toLowerCase();
-    for (let i = 0; i < data.length; i++) {
-      let d: DataTree = data[i];
-      if (d === null || d === undefined) { continue; }
-      if (d.texto.trim().toLowerCase().indexOf(filtro) >= 0) {
-        return true;
-      }
-      if (d.temFilhos() && this.contemFiltro(d.filhos, filtro)) {
-        return true;
-      }
-    }
-    return false;
-  }
+  // private contemFiltro(data: DataTree[] | undefined, filtro: string): boolean {
+  //   if (data === null || data === undefined || !data || data.length <= 0) { return false; }
+  //   if (filtro === null || filtro === undefined || filtro.length <= 0) { return false; }
+  //   filtro = filtro.trim().toLowerCase();
+  //   for (let i = 0; i < data.length; i++) {
+  //     let d: DataTree = data[i];
+  //     if (d === null || d === undefined) { continue; }
+  //     if (d.texto.trim().toLowerCase().indexOf(filtro) >= 0) {
+  //       return true;
+  //     }
+  //     if (d.temFilhos() && this.contemFiltro(d.filhos, filtro)) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
   // # End --------------- filtrarData ---------------
 
 }

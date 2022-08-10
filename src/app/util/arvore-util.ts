@@ -205,4 +205,56 @@ export class ArvoreUtil {
     }
     //#endregion
 
+    //#region filter
+    /**
+     * filtra uma árvore pelo texto.
+     * Retorna toda subárvore onde a folha contém o texto de filtro informado, para n filhos
+     * @param dados 
+     * @param filtro 
+     * @returns 
+     */
+    public static findSubTree(dados: DataTree[] | undefined, filtro: string): DataTree[] | undefined {
+        if (dados === undefined || filtro === undefined || filtro === null || filtro.length <= 0) { return dados; }
+        filtro = filtro.toLowerCase().trim();
+        if (filtro.length <= 0) { return dados; }
+
+        let rt: DataTree[] = [];
+        let filhosAux: DataTree[] | undefined = [];
+
+        let addItem: DataTree | undefined = undefined;
+        for (let i = 0; i < dados.length; i++) {
+            addItem = undefined;
+            filhosAux = undefined;
+
+            let d = dados[i];
+            if (d === undefined) { continue; }
+            if (d.texto.trim().toLowerCase().indexOf(filtro) >= 0) { // encontrou o filtro
+                addItem = d.clone();
+            }
+
+            // verificar os filhos
+            if (d.temFilhos() && d.filhos !== undefined) {
+                let fAux: DataTree[] | undefined = this.findSubTree(d.filhos, filtro);
+                if (fAux !== undefined) { // encontrou o filtro nos filhos
+                    if (filhosAux === undefined) { filhosAux = []; }
+                    for (let j = 0; j < fAux.length; j++) {
+                        if (fAux[j] === undefined) { continue; }
+                        filhosAux.push(fAux[j]);
+                    }
+                }
+            }
+            if (filhosAux !== undefined) {
+                if (addItem === undefined) { addItem = d.clone(); }
+                addItem.filhos = filhosAux;
+            }
+
+            if (addItem !== undefined) {
+                rt.push(addItem);
+            }
+        }
+
+        return rt.length > 0 ? rt : undefined;
+    }
+    //#endregion
+
 }
