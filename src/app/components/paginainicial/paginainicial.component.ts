@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { ArvoreUtil } from 'src/app/util/arvore-util';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
@@ -12,22 +11,30 @@ import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 })
 export class PaginainicialComponent implements AfterViewInit {
 
-
   //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
   @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
-  @ViewChild('input_filter') inputFilterTree: ElementRef | undefined;
-
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
 
   private _dataInicial: DataTree[] | undefined; // memória
 
+  public filtroInput: string = '';
+  filtroInputUpdate:Subject<string> = new Subject<string>();
+
   constructor(
     private service: DadosArvoreService
   ) {
     this.data$ = this.service.getInitialData();
     let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
+
+    this.filtroInputUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.pesquisarArvore(value);
+      });
+
   }
 
   ngOnInit(): void {
@@ -77,7 +84,9 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   public limparData(limparMemoria: boolean, limparDataInicial: boolean = true): void {
-    if (limparDataInicial) { this._dataInicial = undefined; }
+    if (limparDataInicial) {
+      this._dataInicial = undefined;
+    }
     this.treeSimple?.limparData();
     this.limparSelecao(limparMemoria);
 
@@ -102,12 +111,13 @@ export class PaginainicialComponent implements AfterViewInit {
 
     this.limparData(false, limparDataInicial);
     if (this._dataInicial !== undefined && this._dataInicial.length > 0) {
-      this.delay(30).then(any => {
-        this.treeSimple?.setData(this._dataInicial);
-        this.treeSimple?.closeExpandAllNodes(true);
+      //this.delay(200).then(any => {
+      this.treeSimple?.limparData();
+      this.treeSimple?.setData(this._dataInicial); // sem o delay ele não consegue refletir no html (!)
+      this.treeSimple?.closeExpandAllNodes(true);
 
-        //this.treeSimple?.selecionarIds(idsSelecionados);
-      });
+      //this.treeSimple?.selecionarIds(idsSelecionados);
+      //});
       return undefined;
     }
     let obs$ = this.service.getInitialData();
@@ -138,9 +148,10 @@ export class PaginainicialComponent implements AfterViewInit {
 
   //#region Filtrar Árvore
   private houveFiltro: boolean = false;
-  public pesquisarArvore(event: any): void {
-    let valor = event === undefined ? undefined : event.target.value;
-    if (event === undefined || valor === undefined || valor.length <= 0) {
+  public pesquisarArvore(valor: string): void {
+    //let valor = event === undefined ? undefined : event.target.value;
+    //event === undefined ||
+    if (valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
         let lid$ = this.loadInitialData(false);
         if (lid$ === undefined) {
@@ -167,7 +178,7 @@ export class PaginainicialComponent implements AfterViewInit {
         subscriber.unsubscribe();
         return;
       }
-      
+
       this.delay(30).then(_ => {
         this.treeSimple?.setData(dados, false);
         this.treeSimple?.setAllJaClicado(); // evitar loading de novos filhos - não alterar o filtro
@@ -207,9 +218,7 @@ export class PaginainicialComponent implements AfterViewInit {
   }
 
   private setInputText(texto: string = ''): void {
-    if (this.inputFilterTree !== undefined) {
-      this.inputFilterTree.nativeElement.value = texto;
-    }
+    this.filtroInput = texto;
   }
 
   //----
@@ -226,8 +235,9 @@ export class PaginainicialComponent implements AfterViewInit {
       this._dataInicial = this.treeSimple.dados;
       return;
     }
-    console.log('-- merge data');
-    this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
+    //console.log('-- merge data');
+    //this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
+    //console.log('2 this._dataInicial set');
 
     // console.log('-- atualizarFilhos');
     // ArvoreUtil.atualizarFilhos(this._dataInicial, item);

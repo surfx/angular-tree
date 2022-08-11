@@ -158,51 +158,52 @@ export class ArvoreUtil {
     //#endregion
 
     //#region merge
-    /**
-     * Merge de duas árvores DataTree[]
-     * @param dados1 árvore 1
-     * @param dados2 árvore 2
-     * @returns 
-     */
-    public static mergeDt(dados1: DataTree[] | undefined, dados2: DataTree[] | undefined): DataTree[] | undefined {
-        if (dados1 === undefined || dados1.length <= 0 || dados2 === undefined || dados2.length <= 0) { return dados1 ?? dados2; }
+    // NOK? - não confirmado
+    // /**
+    //  * Merge de duas árvores DataTree[]
+    //  * @param dados1 árvore 1
+    //  * @param dados2 árvore 2
+    //  * @returns 
+    //  */
+    // public static mergeDt(dados1: DataTree[] | undefined, dados2: DataTree[] | undefined): DataTree[] | undefined {
+    //     if (dados1 === undefined || dados1.length <= 0 || dados2 === undefined || dados2.length <= 0) { return dados1 ?? dados2; }
 
-        let vids1 = [...dados1.map(item => item.id)];
-        let dtAux = dados2.filter(v => vids1.indexOf(v.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
+    //     let vids1 = [...dados1.map(item => item.id)];
+    //     let dtAux = dados2.filter(v => vids1.indexOf(v.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
 
-        //let map2: Map<string, DataTree> | undefined = this.toMapDt(dados2);
-        let map2: Map<string, DataTree> | undefined = ArvoreUtil.toMapFirstLevel(dados2);
+    //     //let map2: Map<string, DataTree> | undefined = this.toMapDt(dados2);
+    //     let map2: Map<string, DataTree> | undefined = ArvoreUtil.toMapFirstLevel(dados2);
 
-        let rt: DataTree[] = [];
+    //     let rt: DataTree[] = [];
 
-        dados1.forEach(item1 => {
-            if (map2 === undefined || map2.size <= 0 || !map2.has(item1.id)) {
-                rt.push(item1);
-                return;
-            }
-            let item2: DataTree | undefined = map2.get(item1.id);
-            if (item2 === undefined) {
-                rt.push(item1);
-                return;
-            }
+    //     dados1.forEach(item1 => {
+    //         if (map2 === undefined || map2.size <= 0 || !map2.has(item1.id)) {
+    //             rt.push(item1);
+    //             return;
+    //         }
+    //         let item2: DataTree | undefined = map2.get(item1.id);
+    //         if (item2 === undefined) {
+    //             rt.push(item1);
+    //             return;
+    //         }
 
-            let filhos1: DataTree[] | undefined = item1.filhos;
-            let filhos2: DataTree[] | undefined = item2.filhos;
-            if (filhos1 === undefined || filhos2 === undefined) {
-                item1.filhos = filhos1 ?? filhos2;
-                rt.push(item1);
-                return;
-            }
-            item1.filhos = this.mergeDt(filhos1, filhos2);
-            rt.push(item1);
-        });
+    //         let filhos1: DataTree[] | undefined = item1.filhos;
+    //         let filhos2: DataTree[] | undefined = item2.filhos;
+    //         if (filhos1 === undefined || filhos2 === undefined) {
+    //             item1.filhos = filhos1 ?? filhos2;
+    //             rt.push(item1);
+    //             return;
+    //         }
+    //         item1.filhos = this.mergeDt(filhos1, filhos2);
+    //         rt.push(item1);
+    //     });
 
-        if (dtAux !== undefined && dtAux.length >= 0) {
-            dtAux.forEach(d => rt.push(d));
-        }
+    //     if (dtAux !== undefined && dtAux.length >= 0) {
+    //         dtAux.forEach(d => rt.push(d));
+    //     }
 
-        return rt;
-    }
+    //     return rt;
+    // }
     //#endregion
 
     //#region filter

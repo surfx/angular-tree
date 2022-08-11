@@ -48,3 +48,5 @@ typescript                      4.7.4
 - [Multiple ways to Create an Observable](https://www.cloudhadoop.com/angular-observable-delay-example/)
 - [Modal Angular](https://consolelog.com.br/modal-animations-angular/)
 - [Ideia Recursão Componente](https://stackoverflow.com/questions/63795040/a-recursive-function-in-angular-html-document)
+- [DebounceTime & Debounce](https://www.tektutorialshub.com/angular/debouncetime-debounce-in-angular/)
+- [Debounce code](https://stackblitz.com/edit/angular-debounce-input-example?file=src%2Fapp%2Fhello.component.ts,src%2Fapp%2Fapp.component.ts,src%2Fapp%2Fapp.component.html)

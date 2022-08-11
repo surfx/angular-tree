@@ -111,9 +111,9 @@ export class TestesComponent implements AfterViewInit, OnInit {
     // console.log(dt3);
     // console.log(dt4);
 
-    let teste = ArvoreUtil.mergeDt(dt1, dt2);
-    console.log(teste);
-    ArvoreUtil.printDt(teste);
+    // let teste = ArvoreUtil.mergeDt(dt1, dt2);
+    // console.log(teste);
+    // ArvoreUtil.printDt(teste);
 
   }
 
@@ -152,8 +152,8 @@ export class TestesComponent implements AfterViewInit, OnInit {
     // console.log(merged);
     //----------------------
 
-    let teste = ArvoreUtil.mergeDt(a1, a2);
-    console.log(teste);
+    // let teste = ArvoreUtil.mergeDt(a1, a2);
+    // console.log(teste);
   }
 
   public teste3(): void {
@@ -168,9 +168,9 @@ export class TestesComponent implements AfterViewInit, OnInit {
     ArvoreUtil.printDt(a2);
     console.log('----------------------------');
 
-    let teste = ArvoreUtil.mergeDt(a1, a2);
-    console.log(teste);
-    ArvoreUtil.printDt(teste);
+    // let teste = ArvoreUtil.mergeDt(a1, a2);
+    // console.log(teste);
+    // ArvoreUtil.printDt(teste);
   }
 
 
@@ -218,21 +218,21 @@ export class TestesComponent implements AfterViewInit, OnInit {
      * @returns 
      */
   private atualizarFilhos(dados: DataTree[] | undefined, itemAtualizado: DataTree | undefined): boolean {
-    if (dados === undefined || itemAtualizado === undefined) { return false; }
-    for (let i = 0; i < dados.length; i++) {
-      if (dados[i].id === itemAtualizado.id) {
-        itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
-        dados[i] = itemAtualizado;
-        return true;
-      }
-    }
-    // busca filhos
-    for (let i = 0; i < dados.length; i++) {
-      if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
-      if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
-        return true;
-      }
-    }
+    // if (dados === undefined || itemAtualizado === undefined) { return false; }
+    // for (let i = 0; i < dados.length; i++) {
+    //   if (dados[i].id === itemAtualizado.id) {
+    //     itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
+    //     dados[i] = itemAtualizado;
+    //     return true;
+    //   }
+    // }
+    // // busca filhos
+    // for (let i = 0; i < dados.length; i++) {
+    //   if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
+    //   if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
+    //     return true;
+    //   }
+    // }
     return false;
   }
 

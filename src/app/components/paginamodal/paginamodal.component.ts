@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
-import { ArvoreUtil } from 'src/app/util/arvore-util';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
@@ -16,18 +15,27 @@ export class PaginamodalComponent implements AfterViewInit {
   showOverlay: boolean = true;
 
   @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
-  @ViewChild('input_filter') inputFilterTree: ElementRef | undefined;
 
   data$: Observable<DataTree[] | undefined> | undefined;
   alldata: DataTree[] | undefined;
 
   private _dataInicial: DataTree[] | undefined; // memória
 
+  public filtroInput: string = '';
+  filtroInputUpdate: Subject<string> = new Subject<string>();
+
   constructor(
     private service: DadosArvoreService
   ) {
     this.data$ = this.service.getInitialData();
     let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
+
+    this.filtroInputUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.pesquisarArvore(value);
+      });
   }
 
   ngAfterViewInit(): void {
@@ -87,9 +95,10 @@ export class PaginamodalComponent implements AfterViewInit {
 
   //#region Filtrar Árvore
   private houveFiltro: boolean = false;
-  public pesquisarArvore(event: any): void {
-    let valor = event === undefined ? undefined : event.target.value;
-    if (event === undefined || valor === undefined || valor.length <= 0) {
+  public pesquisarArvore(valor: string): void {
+    //let valor = event === undefined ? undefined : event.target.value;
+    //event === undefined ||
+    if (valor === undefined || valor.length <= 0) {
       if (this.houveFiltro) {
         let lid$ = this.loadInitialData(false);
         if (lid$ === undefined) {
@@ -170,9 +179,7 @@ export class PaginamodalComponent implements AfterViewInit {
   }
 
   private setInputText(texto: string = ''): void {
-    if (this.inputFilterTree !== undefined) {
-      this.inputFilterTree.nativeElement.value = texto;
-    }
+    this.filtroInput = texto;
   }
 
   public onclickitem(item: DataTree): void {
@@ -194,8 +201,8 @@ export class PaginamodalComponent implements AfterViewInit {
       this._dataInicial = this.treeSimple.dados;
       return;
     }
-    console.log('-- merge data');
-    this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
+    // console.log('-- merge data');
+    // this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
 
     // console.log('-- atualizarFilhos');
     // ArvoreUtil.atualizarFilhos(this._dataInicial, item);

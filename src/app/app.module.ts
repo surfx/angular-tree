@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ArvoreSimpleRecursiveComponent } from './components/tree/arvore-simple-recursive/arvore-simple-recursive.component';
 import { PaginainicialComponent } from './components/paginainicial/paginainicial.component';
 import { PaginamodalComponent } from './components/paginamodal/paginamodal.component';
-import { TreeSimpleComponent } from './components/tree/tree-simple/tree-simple.component';
 import { TestesComponent } from './components/testes/testes.component';
+import { ArvoreSimpleRecursiveComponent } from './components/tree/arvore-simple-recursive/arvore-simple-recursive.component';
+import { TreeSimpleComponent } from './components/tree/tree-simple/tree-simple.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { TestesComponent } from './components/testes/testes.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

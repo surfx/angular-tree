@@ -12,9 +12,10 @@
             <li>
                 <input 
                     type="text" 
-                    (keyup)="pesquisarArvore($event)" 
                     class="input_filter_tree" 
-                    #input_filter
+                    [(ngModel)]="filtroInput" 
+                    name="filtroInput" id="filtroInput"
+                    (ngModelChange)="this.filtroInputUpdate.next($event)"
                 />
             </li>
             <li>
