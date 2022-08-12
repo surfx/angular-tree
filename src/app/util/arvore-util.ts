@@ -95,14 +95,14 @@ export class ArvoreUtil {
     //#endregion
 
     //#region print tree - console.log
-    public static printDt(dados: DataTree[] | undefined) {
+    public static printDt(dados: DataTree[] | undefined, id: boolean = false) {
         if (dados === undefined || dados.length <= 0) { return; }
-        dados.forEach(d => this.print(d));
+        dados.forEach(d => this.print(d, '', id));
     }
 
-    private static print(item: DataTree, space: string = '') {
+    private static print(item: DataTree, space: string = '', id: boolean = false) {
         if (item === undefined || item.texto === undefined) { return; }
-        console.log(space + item.texto);
+        console.log(space + (id ? item.id + ' ' : '') + item.texto);
         if (item.temFilhos() && item.filhos !== undefined) {
             item.filhos.forEach(f => {
                 if (f === undefined) { return; }
@@ -158,52 +158,76 @@ export class ArvoreUtil {
     //#endregion
 
     //#region merge
-    // NOK? - não confirmado
-    // /**
-    //  * Merge de duas árvores DataTree[]
-    //  * @param dados1 árvore 1
-    //  * @param dados2 árvore 2
-    //  * @returns 
-    //  */
-    // public static mergeDt(dados1: DataTree[] | undefined, dados2: DataTree[] | undefined): DataTree[] | undefined {
-    //     if (dados1 === undefined || dados1.length <= 0 || dados2 === undefined || dados2.length <= 0) { return dados1 ?? dados2; }
+    /**
+     * Merge de duas árvores DataTree[]
+     * @param dados1 árvore 1
+     * @param dados2 árvore 2
+     * @returns 
+     */
+    public static mergeDt(dados1: DataTree[] | undefined, dados2: DataTree[] | undefined): DataTree[] | undefined {
+        if (dados1 === undefined || dados1.length <= 0 || dados2 === undefined || dados2.length <= 0) { return dados1 ?? dados2; }
 
-    //     let vids1 = [...dados1.map(item => item.id)];
-    //     let dtAux = dados2.filter(v => vids1.indexOf(v.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
+        let vids1 = [...dados1.map(item => item.id)];
+        let dtAux = dados2.filter(v => vids1.indexOf(v.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
 
-    //     //let map2: Map<string, DataTree> | undefined = this.toMapDt(dados2);
-    //     let map2: Map<string, DataTree> | undefined = ArvoreUtil.toMapFirstLevel(dados2);
+        //let map2: Map<string, DataTree> | undefined = this.toMapDt(dados2);
+        let map2: Map<string, DataTree> | undefined = ArvoreUtil.toMapFirstLevel(dados2);
 
-    //     let rt: DataTree[] = [];
+        let rt: DataTree[] = [];
 
-    //     dados1.forEach(item1 => {
-    //         if (map2 === undefined || map2.size <= 0 || !map2.has(item1.id)) {
-    //             rt.push(item1);
-    //             return;
-    //         }
-    //         let item2: DataTree | undefined = map2.get(item1.id);
-    //         if (item2 === undefined) {
-    //             rt.push(item1);
-    //             return;
-    //         }
+        dados1.forEach(item1 => {
+            if (map2 === undefined || map2.size <= 0 || !map2.has(item1.id)) {
+                rt.push(item1);
+                return;
+            }
+            let item2: DataTree | undefined = map2.get(item1.id);
+            if (item2 === undefined) {
+                rt.push(item1);
+                return;
+            }
 
-    //         let filhos1: DataTree[] | undefined = item1.filhos;
-    //         let filhos2: DataTree[] | undefined = item2.filhos;
-    //         if (filhos1 === undefined || filhos2 === undefined) {
-    //             item1.filhos = filhos1 ?? filhos2;
-    //             rt.push(item1);
-    //             return;
-    //         }
-    //         item1.filhos = this.mergeDt(filhos1, filhos2);
-    //         rt.push(item1);
-    //     });
+            let filhos1: DataTree[] | undefined = item1.filhos;
+            let filhos2: DataTree[] | undefined = item2.filhos;
+            if (filhos1 === undefined || filhos2 === undefined) {
+                item1.filhos = filhos1 ?? filhos2;
+                rt.push(item1);
+                return;
+            }
+            item1.filhos = this.mergeDt(filhos1, filhos2);
+            rt.push(item1);
+        });
 
-    //     if (dtAux !== undefined && dtAux.length >= 0) {
-    //         dtAux.forEach(d => rt.push(d));
-    //     }
+        if (dtAux !== undefined && dtAux.length > 0) {
+            dtAux.forEach(d => rt.push(d));
+        }
 
-    //     return rt;
-    // }
+        return rt;
+    }
+
+    /**
+     * atualiza a estrutura de árvore caso algum filho tenha sido alterado
+     * @param dados 
+     * @param itemAtualizado 
+     * @returns 
+     */
+    public static atualizarFilhos(dados: DataTree[] | undefined, itemAtualizado: DataTree | undefined): boolean {
+        if (dados === undefined || itemAtualizado === undefined) { return false; }
+        for (let i = 0; i < dados.length; i++) {
+            if (dados[i].id === itemAtualizado.id) {
+                itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
+                dados[i] = itemAtualizado;
+                return true;
+            }
+        }
+        // busca filhos
+        for (let i = 0; i < dados.length; i++) {
+            if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
+            if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
+                return true;
+            }
+        }
+        return false;
+    }
     //#endregion
 
     //#region filter

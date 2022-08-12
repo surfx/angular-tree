@@ -173,6 +173,15 @@ export class TestesComponent implements AfterViewInit, OnInit {
     // ArvoreUtil.printDt(teste);
   }
 
+  public teste5(): void {
+    // busca árvore recursiva
+    ArvoreUtil.printDt(this.alldata);
+    console.log('-------------------');
+
+    let filtro: string = "";
+    let a1 = ArvoreUtil.findSubTree(this.alldata, filtro);
+    ArvoreUtil.printDt(a1);
+  }
 
   public teste4(): void {
     let dt1 = this.getData1();
@@ -208,42 +217,53 @@ export class TestesComponent implements AfterViewInit, OnInit {
     this.atualizarFilhos(dt1, item11a2);
     ArvoreUtil.printDt(dt1);
     console.log('-------------------');
-
   }
 
   /**
-     * atualiza a estrutura de árvore caso algum filho tenha sido alterado - nok
+     * atualiza a estrutura de árvore caso algum filho tenha sido alterado
      * @param dados 
      * @param itemAtualizado 
      * @returns 
      */
   private atualizarFilhos(dados: DataTree[] | undefined, itemAtualizado: DataTree | undefined): boolean {
-    // if (dados === undefined || itemAtualizado === undefined) { return false; }
-    // for (let i = 0; i < dados.length; i++) {
-    //   if (dados[i].id === itemAtualizado.id) {
-    //     itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
-    //     dados[i] = itemAtualizado;
-    //     return true;
-    //   }
-    // }
-    // // busca filhos
-    // for (let i = 0; i < dados.length; i++) {
-    //   if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
-    //   if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
-    //     return true;
-    //   }
-    // }
+    if (dados === undefined || itemAtualizado === undefined) { return false; }
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].id === itemAtualizado.id) {
+        itemAtualizado.filhos = ArvoreUtil.mergeDt(dados[i].filhos, itemAtualizado.filhos);
+        dados[i] = itemAtualizado;
+        return true;
+      }
+    }
+    // busca filhos
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i] === undefined || !dados[i].temFilhos() || dados[i].filhos === undefined) { continue; }
+      if (this.atualizarFilhos(dados[i].filhos, itemAtualizado)) {
+        return true;
+      }
+    }
     return false;
   }
 
-  public teste5(): void {
-    // busca árvore recursiva
-    ArvoreUtil.printDt(this.alldata);
+  // 1) encontrar o nodo na árvore (id)
+  // 2) realizar um merge dos filhos e subfilhos
+  // 2.1) merge de filhos = unir todos os filhos em um vetor só
+  // 2.2) merge de subfilhos = para cada subfilho, fazer um merge dos arrays dos filhos
+
+  private testemergearray() {
+    let array1: DataTree[] = [new DataTree('1', "raju"), new DataTree('2', "ravi"), new DataTree('4', "john"), new DataTree('6', "jack")];
+    let array2: DataTree[] = [new DataTree('1', "b.com"), new DataTree('3', "b.a"), new DataTree('4', "c.a"), new DataTree('5', "horticulture")];
+
+    ArvoreUtil.printDt(array1, true);
+    console.log('-------------------');
+    ArvoreUtil.printDt(array2, true);
     console.log('-------------------');
 
-    let filtro: string = "";
-    let a1 = ArvoreUtil.findSubTree(this.alldata, filtro);
-    ArvoreUtil.printDt(a1);
+    let vids1 = [...array1.map(item => item.id)];
+    let array2diff = array2.filter(item => vids1.indexOf(item.id) < 0); // itens que existem no vetor 2, mas não no vetor 1
+    let arrayMerge = [...array1, ...array2diff];
+    ArvoreUtil.printDt(arrayMerge, true);
+    console.log('-------------------');
+
   }
 
 

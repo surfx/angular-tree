@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
+import { ArvoreUtil } from 'src/app/util/arvore-util';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
@@ -246,8 +247,8 @@ export class PaginainicialComponent implements AfterViewInit, OnDestroy {
     //this._dataInicial = ArvoreUtil.mergeDt(this._dataInicial, this.treeSimple.dados);
     //console.log('2 this._dataInicial set');
 
-    // console.log('-- atualizarFilhos');
-    // ArvoreUtil.atualizarFilhos(this._dataInicial, item);
+    console.log('-- atualizarFilhos'); // - se justifica para loads incrementais
+    ArvoreUtil.atualizarFilhos(this._dataInicial, item);
   }
 
   //this.delay(300).then(any => {});
