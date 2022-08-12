@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
@@ -9,7 +9,7 @@ import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
   templateUrl: './paginainicial.component.html',
   styleUrls: ['./paginainicial.component.css']
 })
-export class PaginainicialComponent implements AfterViewInit {
+export class PaginainicialComponent implements AfterViewInit, OnDestroy {
 
   //@ViewChild('tree_simple') treeSimple: ArvoreSimpleDataComponent | undefined;
   @ViewChild('tree_simple') treeSimple: TreeSimpleComponent | undefined;
@@ -20,7 +20,8 @@ export class PaginainicialComponent implements AfterViewInit {
   private _dataInicial: DataTree[] | undefined; // memória
 
   public filtroInput: string = '';
-  filtroInputUpdate:Subject<string> = new Subject<string>();
+  filtroInputUpdate: Subject<string> = new Subject<string>();
+  private _subsFiltroInput: Subscription | undefined;
 
   constructor(
     private service: DadosArvoreService
@@ -28,14 +29,16 @@ export class PaginainicialComponent implements AfterViewInit {
     this.data$ = this.service.getInitialData();
     let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
 
-    this.filtroInputUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.pesquisarArvore(value);
-      });
+    this._subsFiltroInput =
+      this.filtroInputUpdate.pipe(
+        debounceTime(300),
+        distinctUntilChanged())
+        .subscribe(value => {
+          this.pesquisarArvore(value);
+        });
 
   }
+
 
   ngOnInit(): void {
   }
@@ -46,6 +49,10 @@ export class PaginainicialComponent implements AfterViewInit {
       this.treeSimple?.setData(data);
       subscriber?.unsubscribe();
     });
+  }
+
+  ngOnDestroy(): void {
+    this._subsFiltroInput?.unsubscribe();
   }
 
   public getMapSelecionados() {

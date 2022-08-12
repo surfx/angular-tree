@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
@@ -9,7 +9,7 @@ import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
   templateUrl: './paginamodal.component.html',
   styleUrls: ['./paginamodal.component.css']
 })
-export class PaginamodalComponent implements AfterViewInit {
+export class PaginamodalComponent implements AfterViewInit, OnDestroy {
 
   mostrar: boolean = true;
   showOverlay: boolean = true;
@@ -23,6 +23,7 @@ export class PaginamodalComponent implements AfterViewInit {
 
   public filtroInput: string = '';
   filtroInputUpdate: Subject<string> = new Subject<string>();
+  private _subsFiltroInput: Subscription | undefined;
 
   constructor(
     private service: DadosArvoreService
@@ -30,12 +31,13 @@ export class PaginamodalComponent implements AfterViewInit {
     this.data$ = this.service.getInitialData();
     let subscriber = this.service.getData()?.subscribe(dados => { this.alldata = dados; subscriber?.unsubscribe(); });
 
-    this.filtroInputUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.pesquisarArvore(value);
-      });
+    this._subsFiltroInput =
+      this.filtroInputUpdate.pipe(
+        debounceTime(400),
+        distinctUntilChanged())
+        .subscribe(value => {
+          this.pesquisarArvore(value);
+        });
   }
 
   ngAfterViewInit(): void {
@@ -44,6 +46,10 @@ export class PaginamodalComponent implements AfterViewInit {
     // if (this.treeSimple !== undefined){
     //   this.treeSimple.loadAll();
     // }
+  }
+
+  ngOnDestroy(): void {
+    this._subsFiltroInput?.unsubscribe();
   }
 
   //private _ids: string[] | undefined;

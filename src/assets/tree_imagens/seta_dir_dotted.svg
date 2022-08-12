@@ -1,45 +1,202 @@
-<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 204 298" width="204" height="298">
-	<title>right-arrow-svgrepo-com-svg</title>
-	<style>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   width="284.92899"
+   height="306"
+   viewBox="0 0 284.929 306.00001"
+   xml:space="preserve"
+   sodipodi:docname="seta_dotted.svg"
+   inkscape:version="1.2.1 (9c6d41e, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs110" /><sodipodi:namedview
+   id="namedview108"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="1"
+   inkscape:cx="-37"
+   inkscape:cy="214"
+   inkscape:window-width="1636"
+   inkscape:window-height="759"
+   inkscape:window-x="180"
+   inkscape:window-y="118"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Capa_1"
+   showguides="true"><sodipodi:guide
+     position="-0.010630853,205.50943"
+     orientation="1,0"
+     id="guide1282"
+     inkscape:locked="false" /><sodipodi:guide
+     position="284.93484,204.64385"
+     orientation="1,0"
+     id="guide1284"
+     inkscape:locked="false" /><sodipodi:guide
+     position="83.011253,306.00512"
+     orientation="0,-1"
+     id="guide1286"
+     inkscape:locked="false" /><sodipodi:guide
+     position="83.037993,-0.0026735548"
+     orientation="0,-1"
+     id="guide1288"
+     inkscape:locked="false" /></sodipodi:namedview>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style
+   id="style928">
 		.s0 { fill: #000000 } 
-	</style>
-	<g id="Layer">
-		<path id="Layer" class="s0" d="m54.3 29.7c-8.2 0-14.8-6.7-14.8-14.9 0-8.2 6.6-14.8 14.8-14.8 8.2 0 14.8 6.6 14.8 14.8 0 8.2-6.6 14.9-14.8 14.9z"/>
-		<path id="Layer" class="s0" d="m98.3 74.6c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.9 14.8-14.9 8.2 0 14.9 6.7 14.9 14.9 0 8.2-6.7 14.8-14.9 14.8z"/>
-		<path id="Layer" class="s0" d="m98.3 251.7c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.8 14.8-14.8 8.2 0 14.9 6.6 14.9 14.8 0 8.2-6.7 14.8-14.9 14.8z"/>
-		<path id="Layer" class="s0" d="m144.2 118.6c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.8 14.8-14.8 8.2 0 14.9 6.6 14.9 14.8 0 8.2-6.7 14.8-14.9 14.8z"/>
-		<path id="Layer" class="s0" d="m144.2 207.6c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.8 14.8-14.8 8.2 0 14.9 6.6 14.9 14.8 0 8.2-6.7 14.8-14.9 14.8z"/>
-		<path id="Layer" class="s0" d="m54.3 297.6c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.8 14.8-14.8 8.2 0 14.8 6.6 14.8 14.8 0 8.2-6.6 14.8-14.8 14.8z"/>
-		<path id="Layer" class="s0" d="m188.3 162.7c-8.2 0-14.8-6.6-14.8-14.8 0-8.2 6.6-14.9 14.8-14.9 8.2 0 14.9 6.7 14.9 14.9 0 8.2-6.7 14.8-14.9 14.8z"/>
+	</style><g
+   id="g1123"
+   transform="translate(0,17.738808)"
+   inkscape:label="baixo"
+   style="display:none"
+   sodipodi:insensitive="true"><g
+     id="g1069">
+	<path
+   d="M 282.082,76.511 267.808,62.238 c -1.902,-1.906 -4.093,-2.856 -6.57,-2.856 -2.471,0 -4.661,0.95 -6.563,2.856 L 142.466,174.441 30.262,62.241 c -1.903,-1.906 -4.093,-2.856 -6.567,-2.856 -2.475,0 -4.665,0.95 -6.567,2.856 L 2.856,76.515 C 0.95,78.417 0,80.607 0,83.082 c 0,2.473 0.953,4.663 2.856,6.565 l 133.043,133.046 c 1.902,1.903 4.093,2.854 6.567,2.854 2.474,0 4.661,-0.951 6.562,-2.854 L 282.082,89.647 c 1.902,-1.903 2.847,-4.093 2.847,-6.565 0,-2.475 -0.945,-4.665 -2.847,-6.571 z"
+   id="path1067" />
+</g><g
+     id="g1071">
+</g><g
+     id="g1073">
+</g><g
+     id="g1075">
+</g><g
+     id="g1077">
+</g><g
+     id="g1079">
+</g><g
+     id="g1081">
+</g><g
+     id="g1083">
+</g><g
+     id="g1085">
+</g><g
+     id="g1087">
+</g><g
+     id="g1089">
+</g><g
+     id="g1091">
+</g><g
+     id="g1093">
+</g><g
+     id="g1095">
+</g><g
+     id="g1097">
+</g><g
+     id="g1099">
+</g></g><style
+   id="style1127">
+		.s0 { fill: #000000 } 
+	</style><g
+   id="g1204"
+   transform="translate(25.360594,5.756213)"
+   inkscape:label="dotted"
+   style="display:inline"
+   sodipodi:insensitive="true"><g
+     id="g1142"><path
+       id="Layer"
+       class="s0"
+       d="M 54.3,29.7 C 46.1,29.7 39.5,23 39.5,14.8 39.5,6.6 46.1,0 54.3,0 c 8.2,0 14.8,6.6 14.8,14.8 0,8.2 -6.6,14.9 -14.8,14.9 z" /><path
+       id="path1130"
+       class="s0"
+       d="m 98.3,74.6 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.9 14.8,-14.9 8.2,0 14.9,6.7 14.9,14.9 0,8.2 -6.7,14.8 -14.9,14.8 z" /><path
+       id="path1132"
+       class="s0"
+       d="m 98.3,251.7 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.8 14.8,-14.8 8.2,0 14.9,6.6 14.9,14.8 0,8.2 -6.7,14.8 -14.9,14.8 z" /><path
+       id="path1134"
+       class="s0"
+       d="m 144.2,118.6 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.8 14.8,-14.8 8.2,0 14.9,6.6 14.9,14.8 0,8.2 -6.7,14.8 -14.9,14.8 z" /><path
+       id="path1136"
+       class="s0"
+       d="m 144.2,207.6 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.8 14.8,-14.8 8.2,0 14.9,6.6 14.9,14.8 0,8.2 -6.7,14.8 -14.9,14.8 z" /><path
+       id="path1138"
+       class="s0"
+       d="m 54.3,297.6 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.8 14.8,-14.8 8.2,0 14.8,6.6 14.8,14.8 0,8.2 -6.6,14.8 -14.8,14.8 z" /><path
+       id="path1140"
+       class="s0"
+       d="m 188.3,162.7 c -8.2,0 -14.8,-6.6 -14.8,-14.8 0,-8.2 6.6,-14.9 14.8,-14.9 8.2,0 14.9,6.7 14.9,14.9 0,8.2 -6.7,14.8 -14.9,14.8 z" /></g><g
+     id="g1144" /><g
+     id="g1146" /><g
+     id="g1148" /><g
+     id="g1150" /><g
+     id="g1152" /><g
+     id="g1154" /><g
+     id="g1156" /><g
+     id="g1158" /><g
+     id="g1160" /><g
+     id="g1162" /><g
+     id="g1164" /><g
+     id="g1166" /><g
+     id="g1168" /><g
+     id="g1170" /><g
+     id="g1172" /></g><g
+   id="g1264"
+   transform="translate(-11.38987)"
+   style="display:none"
+   inkscape:label="direita"
+   sodipodi:insensitive="true"><g
+     id="g1209">
+	<g
+   id="keyboard-arrow-right">
+		<polygon
+   points="247.35,153 94.35,306 58.65,267.75 175.95,153 58.65,35.7 94.35,0 "
+   id="polygon1206" />
 	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-	<g id="Layer">
-	</g>
-</svg>
+</g><g
+     id="g1211">
+</g><g
+     id="g1213">
+</g><g
+     id="g1215">
+</g><g
+     id="g1217">
+</g><g
+     id="g1219">
+</g><g
+     id="g1221">
+</g><g
+     id="g1223">
+</g><g
+     id="g1225">
+</g><g
+     id="g1227">
+</g><g
+     id="g1229">
+</g><g
+     id="g1231">
+</g><g
+     id="g1233">
+</g><g
+     id="g1235">
+</g><g
+     id="g1237">
+</g><g
+     id="g1239">
+</g></g></svg>

@@ -74,19 +74,13 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
     return !item.aberto ? imgClosed : imgOpened;
   }
 
-  public getImgClass(item: DataTree): string {
-    let classImgClosed = "arrow_right_two_little";
-    let classImgOpened = "arrow_down_two_little";
-    let classImgDotted = "arrow_right_two_little_dotted";
-    if (item === null || item === undefined) { return classImgClosed; }
-    if (!item.jaClicado) { // pode ser que tenha filhos
-      return classImgDotted;
-    }
-    return !item.aberto ? classImgClosed : classImgOpened;
-  }
-
   public clickImg = (item: DataTree) => {
+    if (!item.jaClicado) { // caso: seta_dir_dotted
+      this.loadAndSetFilhos(item);
+    }
+
     item.aberto = !item.aberto;
+    //console.log('clickImg', item.aberto);
   }
   //#endregion
 
