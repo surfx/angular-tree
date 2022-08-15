@@ -9,6 +9,7 @@ import { PaginamodalComponent } from './components/paginamodal/paginamodal.compo
 import { TestesComponent } from './components/testes/testes.component';
 import { ArvoreSimpleRecursiveComponent } from './components/tree/arvore-simple-recursive/arvore-simple-recursive.component';
 import { TreeSimpleComponent } from './components/tree/tree-simple/tree-simple.component';
+import { PaginaalldataComponent } from './components/paginaalldata/paginaalldata.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { TreeSimpleComponent } from './components/tree/tree-simple/tree-simple.c
     PaginainicialComponent,
     PaginamodalComponent,
     TestesComponent,
-    TreeSimpleComponent
+    TreeSimpleComponent,
+    PaginaalldataComponent
   ],
   imports: [
     BrowserModule,
