@@ -266,6 +266,63 @@ export class TestesComponent implements AfterViewInit, OnInit {
 
   }
 
+  public teste6(): void {
+    let a1: DataTree[] = [
+      new DataTree('1', 'item 1'),
+      new DataTree('2', 'item 2'),
+      new DataTree('4', 'item 4')
+    ];
+    let a2: DataTree[] = [
+      new DataTree('7', 'item 7'),
+      new DataTree('1', 'item 1'),
+      new DataTree('2', 'item 2'),
+      new DataTree('3', 'item 3')
+    ];
+
+    ArvoreUtil.printDt(a1, true);
+    console.log('-------------------');
+    ArvoreUtil.printDt(a2, true);
+    console.log('-------------------');
+
+    let arrayMerged = this.mergearray(a1, a2);
+    ArvoreUtil.printDt(arrayMerged, true);
+    console.log('-------------------');
+
+    console.log('******************************');
+
+    let dt1 = this.getData1();
+    let dt2 = this.getData2();
+    ArvoreUtil.printDt(dt1);
+    console.log('-------------------');
+    ArvoreUtil.printDt(dt2);
+    console.log('-------------------');
+    //arrayMerged = this.mergearray(dt1, dt2);
+    // arrayMerged = ArvoreUtil.mergeDt(dt1, dt2);
+    // ArvoreUtil.printDt(arrayMerged);
+  }
+
+  private mergearray(a1: DataTree[] | undefined, a2: DataTree[] | undefined): DataTree[] | undefined {
+    if (a1 === undefined || a2 === undefined) { return a1 ?? a2; }
+    let rt: DataTree[] = [];
+
+    let idsA1 = a1.map(item => item.id);
+    let diff: DataTree[] = a2.filter(item => idsA1.indexOf(item.id) < 0);
+
+    a1.forEach(itemA1 => {
+      console.log('itemA1', itemA1);
+      let itemA2: DataTree | undefined = a2.find(item => item.id === itemA1.id);
+      if (itemA2 === undefined) {
+        rt.push(itemA1);
+        return;
+      }
+      let f: DataTree[] | undefined = this.mergearray(itemA1.filhos, itemA2.filhos);
+      itemA1.filhos = f;
+      rt.push(itemA1);
+    });
+    if (diff.length > 0) { diff.forEach(item => rt.push(item)); }
+
+    return rt;
+  }
 
 
 

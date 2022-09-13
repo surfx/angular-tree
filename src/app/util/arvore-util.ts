@@ -106,7 +106,7 @@ export class ArvoreUtil {
         if (item.temFilhos() && item.filhos !== undefined) {
             item.filhos.forEach(f => {
                 if (f === undefined) { return; }
-                this.print(f, '  ' + space);
+                this.print(f, '  ' + space, id);
             });
         }
     }
