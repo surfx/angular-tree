@@ -324,6 +324,15 @@ export class TestesComponent implements AfterViewInit, OnInit {
     return rt;
   }
 
+  public itemDataTree: DataTree = new DataTree('001', 'item 001');
 
+  public teste7(): void {
+    this.itemDataTree.selecionado = !this.itemDataTree.selecionado;
+    console.log(this.itemDataTree);
+  }
+
+  public clickLabel(item: DataTree | undefined, selFilhos: boolean = false): void {
+    console.log('clickLabel: ', item);
+  }
 
 }

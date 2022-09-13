@@ -3,7 +3,7 @@ import { debounceTime, distinctUntilChanged, Observable, Subject, Subscription }
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 import { ArvoreUtil } from 'src/app/util/arvore-util';
-import { TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
+import { EModoSelecao, TreeSimpleComponent } from '../tree/tree-simple/tree-simple.component';
 
 @Component({
   selector: 'app-paginamodal',
@@ -25,6 +25,8 @@ export class PaginamodalComponent implements AfterViewInit, OnDestroy {
   public filtroInput: string = '';
   filtroInputUpdate: Subject<string> = new Subject<string>();
   private _subsFiltroInput: Subscription | undefined;
+
+  public ModoSelecao: EModoSelecao = EModoSelecao.CheckBox;
 
   constructor(
     private service: DadosArvoreService

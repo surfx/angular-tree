@@ -6,8 +6,15 @@
     <ng-template #Recursion let-list="list">
         <li *ngFor="let item of list">
             <img [src]="getImg(item)" (click)="clickImg(item)">
-            <input type="checkbox" [checked]="item.selecionado" (change)="clickLabel(item, true)" *ngIf="ExibirCheckBox">
-            <a href="javascript:void(0)" (click)="clickLabel(item, false)" class="tree_item_text_a">{{item.texto}}</a>
+
+            <ng-template [ngIf]="ModoSelecao === EModoSelecao.RadioButton">
+                <input type="radio" [checked]="item.selecionado" (change)="clickLabel(item, false, true)"/>
+                <a href="javascript:void(0)" (click)="clickLabel(item, false, true)" class="tree_item_text_a">{{item.texto}}</a>
+            </ng-template>
+            <ng-template [ngIf]="ModoSelecao === EModoSelecao.CheckBox">
+                <input type="checkbox" [checked]="item.selecionado" (change)="clickLabel(item, true, false)">
+                <a href="javascript:void(0)" (click)="clickLabel(item, false, false)" class="tree_item_text_a">{{item.texto}}</a>
+            </ng-template>
             <img src="../../../../assets/tree_imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
 
             <ul *ngIf="item.temFilhos() && item.aberto" class="tree_two_little">

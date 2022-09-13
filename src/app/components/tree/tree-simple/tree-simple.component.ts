@@ -3,6 +3,12 @@ import { Observable } from 'rxjs';
 import { DataTree } from 'src/app/entidades/data-tree';
 import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 
+export enum EModoSelecao {
+  CheckBox = 1,
+  RadioButton = 2,
+  Nenhum = 3
+}
+
 @Component({
   selector: 'app-tree-simple',
   templateUrl: './tree-simple.component.html',
@@ -10,10 +16,13 @@ import { DadosArvoreService } from 'src/app/servicos/dados-arvore.service';
 })
 export class TreeSimpleComponent implements OnInit, AfterContentChecked {
 
-  @Input('ExibirCheckBox') ExibirCheckBox: boolean | undefined;
+  @Input('ModoSelecao') ModoSelecao: EModoSelecao | undefined;
   @Input('MultiplaSelecao') MultiplaSelecao: boolean | undefined;
   @Output('ClickItem') ClickItem: EventEmitter<DataTree> = new EventEmitter<DataTree>();
   @Output('EventFilhoAdd') EventFilhoAdd: EventEmitter<DataTree> = new EventEmitter<DataTree>();
+
+  // atribuição de enum para o html
+  public EModoSelecao = EModoSelecao;
 
   //@Input('dados') dados: DataTree[] | undefined;
   private _dados: DataTree[] | undefined = undefined;
@@ -85,18 +94,19 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   //#endregion
 
   /**
-   * click label e checkbox
+   * click label, checkbox e radiobutton
    * @param item 
    * @param selFilhos true: seleciona também os filhos - caso click checkbox
+   * @param deselecionarDemais true: deseleciona os demais itens da tree - caso do radiobutton
    * @returns 
    */
-  public clickLabel(item: DataTree | undefined, selFilhos: boolean = false): void {
+  public clickLabel(item: DataTree | undefined, selFilhos: boolean = false, deselecionarDemais: boolean = false): void {
     if (item === undefined) { return; }
     item.aberto = true;
     this.loadAndSetFilhos(item);
 
     let isSelMem = item.selecionado;
-    if (!this.MultiplaSelecao) { this.limparSelecao(); }
+    if (!this.MultiplaSelecao || deselecionarDemais) { this.limparSelecao(deselecionarDemais); }
     item.selecionado = !isSelMem;
 
     if (this.MultiplaSelecao && selFilhos) {
@@ -140,7 +150,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
    * @returns 
    */
   public selecionarTodos(): void {
-    if (!this.MultiplaSelecao) {
+    if (!this.MultiplaSelecao || this.ModoSelecao === EModoSelecao.RadioButton) {
       console.info('Multipla seleção desabilitada');
       return;
     }
@@ -175,7 +185,7 @@ export class TreeSimpleComponent implements OnInit, AfterContentChecked {
   public selecionarIds(ids: string[] | undefined, desmarcarDemais: boolean = false, selecionarFilhos: boolean = false): void {
     if (desmarcarDemais) { this.limparSelecao(true); }
     if (this.dados === undefined || ids === undefined || ids.length <= 0) { return; }
-    if (!this.MultiplaSelecao) { ids = [ids[0]]; }
+    if (!this.MultiplaSelecao || this.ModoSelecao === EModoSelecao.RadioButton) { ids = [ids[0]]; }
     this.selIdsAux(this.dados, ids, selecionarFilhos);
   }
 
