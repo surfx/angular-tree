@@ -15,6 +15,9 @@
                 <input type="checkbox" [checked]="item.selecionado" (change)="clickLabel(item, true, false)">
                 <a href="javascript:void(0)" (click)="clickLabel(item, false, false)" class="tree_item_text_a">{{item.texto}}</a>
             </ng-template>
+            <ng-template [ngIf]="ModoSelecao === EModoSelecao.Nenhum">
+                {{item.texto}}
+            </ng-template>
             <img src="../../../../assets/tree_imagens/Spinner-0.9s-68px.gif" style="width: 10px;" *ngIf="item.isLoading">
 
             <ul *ngIf="item.temFilhos() && item.aberto" class="tree_two_little">

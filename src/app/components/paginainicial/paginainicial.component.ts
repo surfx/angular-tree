@@ -24,7 +24,7 @@ export class PaginainicialComponent implements AfterViewInit, OnDestroy {
   filtroInputUpdate: Subject<string> = new Subject<string>();
   private _subsFiltroInput: Subscription | undefined;
 
-  public ModoSelecao: EModoSelecao = EModoSelecao.RadioButton;
+  public ModoSelecao: EModoSelecao = EModoSelecao.CheckBox;
 
   constructor(
     private service: DadosArvoreService
